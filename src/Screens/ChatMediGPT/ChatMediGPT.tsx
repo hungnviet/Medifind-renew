@@ -56,42 +56,63 @@ export const ChatMediGPT: React.FC = () => {
       }
     }
   };
-  const getChatBotResponse = (userMessage: string): IMessage[] => {
-    // Simulate a chatbot response based on user input
-    const botMessages: IMessage[] = [];
+  // const getChatBotResponse = (userMessage: string): IMessage[] => {
+  //   // Simulate a chatbot response based on user input
+  //   const botMessages: IMessage[] = [];
 
-    if (userMessage.toLowerCase().includes("health solution")) {
-      botMessages.push({
-        _id: new Date().getTime().toString(),
-        text: "Of course, I'd be happy to help. Can you please describe your symptoms or what's been bothering you?",
-        createdAt: new Date(),
-        user: { _id: 2, name: "ChatBot" },
-      });
-    } else if (userMessage.toLowerCase().includes("headache") || userMessage.toLowerCase().includes("sore throat")) {
-      botMessages.push({
-        _id: new Date().getTime().toString(),
-        text: "I'm sorry to hear that. Headaches, sore throats, and fatigue can have various causes. Have you taken any medication or tried any remedies so far?",
-        createdAt: new Date(),
-        user: { _id: 2, name: "ChatBot" },
-      });
-    } else if (userMessage.toLowerCase().includes("over-the-counter pain relievers") || userMessage.toLowerCase().includes("tea with honey")) {
-      botMessages.push({
-        _id: new Date().getTime().toString(),
-        text: "It's good that you've tried some home remedies. However, persistent symptoms like these may require a more detailed evaluation. I recommend that you consult with a healthcare professional for a proper diagnosis. They can provide you with personalized advice and treatment options.",
-        createdAt: new Date(),
-        user: { _id: 2, name: "ChatBot" },
-      });
-    } else {
-      botMessages.push({
-        _id: new Date().getTime().toString(),
-        text: "I recommend that you consult with a healthcare professional for a proper diagnosis. They can provide you with personalized advice and treatment options.",
-        createdAt: new Date(),
-        user: { _id: 2, name: "ChatBot" },
-      });
+  //   if (userMessage.toLowerCase().includes("health solution")) {
+  //     botMessages.push({
+  //       _id: new Date().getTime().toString(),
+  //       text: "Of course, I'd be happy to help. Can you please describe your symptoms or what's been bothering you?",
+  //       createdAt: new Date(),
+  //       user: { _id: 2, name: "ChatBot" },
+  //     });
+  //   } else if (userMessage.toLowerCase().includes("headache") || userMessage.toLowerCase().includes("sore throat")) {
+  //     botMessages.push({
+  //       _id: new Date().getTime().toString(),
+  //       text: "I'm sorry to hear that. Headaches, sore throats, and fatigue can have various causes. Have you taken any medication or tried any remedies so far?",
+  //       createdAt: new Date(),
+  //       user: { _id: 2, name: "ChatBot" },
+  //     });
+  //   } else if (userMessage.toLowerCase().includes("over-the-counter pain relievers") || userMessage.toLowerCase().includes("tea with honey")) {
+  //     botMessages.push({
+  //       _id: new Date().getTime().toString(),
+  //       text: "It's good that you've tried some home remedies. However, persistent symptoms like these may require a more detailed evaluation. I recommend that you consult with a healthcare professional for a proper diagnosis. They can provide you with personalized advice and treatment options.",
+  //       createdAt: new Date(),
+  //       user: { _id: 2, name: "ChatBot" },
+  //     });
+  //   } else {
+  //     botMessages.push({
+  //       _id: new Date().getTime().toString(),
+  //       text: "I recommend that you consult with a healthcare professional for a proper diagnosis. They can provide you with personalized advice and treatment options.",
+  //       createdAt: new Date(),
+  //       user: { _id: 2, name: "ChatBot" },
+  //     });
+  //   }
+
+  const getChatBotResponse = async (userMessage: string): Promise<IMessage[]> => {
+    // Send a request to the Wikipedia API
+    const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(userMessage)}`);
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-
+  
+    const data = await response.json();
+  
+    // The chatbot's response is in data.extract
+    const botMessages: IMessage[] = [{
+      _id: new Date().getTime().toString(),
+      text: data.extract || "I'm sorry, I could not find any information on that topic.",
+      createdAt: new Date(),
+      user: { _id: 2, name: "ChatBot" },
+    }];
+  
     return botMessages;
   };
+
+    // return botMessages;
+  // };
   return (
     <View style={styles.container}>
       <GiftedChat
