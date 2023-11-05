@@ -15,12 +15,99 @@ export interface ISearchProps {
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
+const dataList: inforPobs[] = [
+  {
+    ten: "paradol",
+    lieuLuong: "500mg",
+    SDK: "123456789",
+    SQD: "456321987",
+    xuatSu: "Han Quoc",
+    congTy: "Congtay TNHH....",
+    dangBaoChe: "ran/long",
+    diaChiSX: "467 Lý Thường Kiệt, phường 7 Quận 10, Tp Hồ Chí Minh"
+  },
+  {
+    ten: "phosphalogen",
+    lieuLuong: "500mg",
+    SDK: "123456789",
+    SQD: "456321987",
+    xuatSu: "Han Quoc",
+    congTy: "Congtay TNHH....",
+    dangBaoChe: "ran/long",
+    diaChiSX: "467 Lý Thường Kiệt, phường 7 Quận 10, Tp Hồ Chí Minh"
+  },
+  {
+    ten: "paracetamol",
+    lieuLuong: "500mg",
+    SDK: "123456789",
+    SQD: "456321987",
+    xuatSu: "Han Quoc",
+    congTy: "Congtay TNHH....",
+    dangBaoChe: "ran/long",
+    diaChiSX: "467 Lý Thường Kiệt, phường 7 Quận 10, Tp Hồ Chí Minh"
+  },
+  {
+    ten: "hapacol",
+    lieuLuong: "500mg",
+    SDK: "123456789",
+    SQD: "456321987",
+    xuatSu: "Han Quoc",
+    congTy: "Congtay TNHH....",
+    dangBaoChe: "ran/long",
+    diaChiSX: "467 Lý Thường Kiệt, phường 7 Quận 10, Tp Hồ Chí Minh"
+  }
+]
+interface inforPobs {
+  ten: string,
+  lieuLuong: string,
+  SDK: string,
+  SQD: string,
+  xuatSu: string,
+  congTy: string,
+  dangBaoChe: string,
+  diaChiSX: string,
+}
+export function InforContainer({ infor }: { infor: inforPobs }) {
+  return (
+    <View style={{
+      backgroundColor: 'white', width: width * 6 / 7, borderRadius: 8, borderColor: color.grey_light, marginTop: 10, borderWidth: 2, paddingTop: 12, paddingLeft: 15, paddingRight: 15, shadowOffset: { width: -5, height: 5, },
+      shadowColor: '#171717',
+      shadowOpacity: 0.6,
+      shadowRadius: 3,
+    }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%' }}>
+        <Text style={{ fontSize: 18, textTransform: 'uppercase', fontWeight: 'bold' }}>{infor.ten}</Text>
+        <Text style={{ fontSize: 16 }}>{infor.lieuLuong}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
+        <Text style={{ fontSize: 12 }}>SĐK :{infor.SDK}</Text>
+        <Text style={{ fontSize: 12 }}>SQĐ :{infor.SQD}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
+        <Text style={{ fontSize: 12 }}>Xuất xứ:</Text>
+        <Text style={{ fontSize: 12 }}>{infor.xuatSu}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
+        <Text style={{ fontSize: 12 }}>Công ty:</Text>
+        <Text style={{ fontSize: 12 }}>{infor.congTy}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
+        <Text style={{ fontSize: 12 }}>Dạng bào chế:</Text>
+        <Text style={{ fontSize: 12 }}>{infor.dangBaoChe}</Text>
+      </View>
+      <Text style={{ fontSize: 12 }}>Địa chỉ sản xuất:</Text>
+      <Text style={{ fontSize: 12 }}>{infor.diaChiSX}</Text>
+    </View>
+
+  )
+}
+
 export const Search = (props: ISearchProps) => {
   const { onNavigate } = props;
   const [success, setSuccess] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchResult, setSearchResult] = useState<inforPobs[]>([]);
 
   function handleSearch() {
     setLoading(true);
@@ -41,7 +128,9 @@ export const Search = (props: ISearchProps) => {
         console.error("Error searching for medicine:", error);
       });
  */
-
+    const text = searchText.toLowerCase();
+    const res: inforPobs[] = dataList.filter(el => el.ten === text);
+    setSearchResult(res);
   };
   function handleAgain() {
     setLoading(false);
@@ -50,6 +139,9 @@ export const Search = (props: ISearchProps) => {
     setSearchText("");
 
   };
+
+
+
 
   return (
     <View style={styles.container}>
@@ -67,37 +159,9 @@ export const Search = (props: ISearchProps) => {
         <Text style={{ color: 'white', paddingBottom: 12 }}> {searchResult.length} {searchResult.length > 0 ? 'results' : 'result'} was found</Text>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{
-            backgroundColor: 'white', width: width * 6 / 7, borderRadius: 8, borderColor: color.grey_light, marginTop: 10, borderWidth: 2, paddingTop: 12, paddingLeft: 15, paddingRight: 15, shadowOffset: { width: -5, height: 5, },
-            shadowColor: '#171717',
-            shadowOpacity: 0.6,
-            shadowRadius: 3,
-          }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%' }}>
-              <Text style={{ fontSize: 18, textTransform: 'uppercase', fontWeight: 'bold' }}>Paradol</Text>
-              <Text style={{ fontSize: 16 }}>500mg</Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-              <Text style={{ fontSize: 12 }}>SĐK :123456789</Text>
-              <Text style={{ fontSize: 12 }}>SQĐ :123456789</Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-              <Text style={{ fontSize: 12 }}>Xuất xứ:</Text>
-              <Text style={{ fontSize: 12 }}>Hàn Quốc</Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-              <Text style={{ fontSize: 12 }}>Công ty:</Text>
-              <Text style={{ fontSize: 12 }}>medicine company</Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-              <Text style={{ fontSize: 12 }}>Dạng bào chế:</Text>
-              <Text style={{ fontSize: 12 }}>Rắn/Lỏng</Text>
-            </View>
-            <Text style={{ fontSize: 12 }}>Địa chỉ sản xuất:</Text>
-            <Text style={{ fontSize: 12 }}>268 Lý Thường Kiệt/ QUận 10/ Thành Phố Hồ Chí Minh</Text>
-          </View>
-
-
+          {
+            searchResult.length > 0 ? searchResult.map((data, index) => <InforContainer key={index} infor={data} />) : <Text style={{ color: 'grey', fontSize: 18, paddingLeft: 20 }}>Sorry! There was any error when search please do it again</Text>
+          }
         </ScrollView>
       </View>}
 
@@ -136,11 +200,12 @@ const styles = StyleSheet.create({
     borderColor: '#B4BAC9',
     borderWidth: 1,
     borderRadius: 22,
-    fontSize: 16
+    fontSize: 16,
+    paddingLeft: 20
 
   },
   btn_initial: {
-    backgroundColor: '#C01C1C',
+    backgroundColor: '#407CE2',
     width: width * 4 / 5,
     height: 55,
     borderRadius: 22,
