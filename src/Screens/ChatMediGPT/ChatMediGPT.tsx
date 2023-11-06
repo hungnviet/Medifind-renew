@@ -40,19 +40,19 @@ const styles = StyleSheet.create({
 export const ChatMediGPT: React.FC = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
 
-  const onSend = (newMessages: IMessage[]) => {
+  const onSend = async (newMessages: IMessage[]) => {
     setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
 
     // Simulate the chatbot responses
     for (let i = 0; i < newMessages.length; i++) {
       if (newMessages[i].user._id === 1) {
         // User message
-        setTimeout(() => {
-          const botResponse = getChatBotResponse(newMessages[i].text);
+        setTimeout(async () => {
+          const botResponse = await getChatBotResponse(newMessages[i].text); // Use 'await' here
           setMessages((prevMessages) =>
             GiftedChat.append(prevMessages, botResponse)
           );
-        }, 1000);
+        }, 50);
       }
     }
   };
@@ -92,29 +92,51 @@ export const ChatMediGPT: React.FC = () => {
 
   const getChatBotResponse = async (userMessage: string): Promise<IMessage[]> => {
     // Send a request to the Wikipedia API
+    /*
     const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(userMessage)}`);
-  
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-  
-    const data = await response.json();
-  
-    // The chatbot's response is in data.extract
-    const botMessages: IMessage[] = [{
-      _id: new Date().getTime().toString(),
-      text: data.extract || "I'm sorry, I could not find any information on that topic.",
-      createdAt: new Date(),
-      user: { _id: 2, name: "ChatBot" },
-    }];
-  
+   
+      const data = await response.json();
+
+      const botMessages: IMessage[] = [{
+        _id: new Date().getTime().toString(),
+        text: data.extract || "I'm sorry, I could not find any information on that topic.",
+        createdAt: new Date(),
+        user: { _id: 2, name: "ChatBot" },
+      }];
+      return botMessages;
+*/
+    const botMessages: IMessage[] = [];
+    try {
+      const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(userMessage)}`);
+      const data = await response.json();
+
+      botMessages.push({
+        _id: new Date().getTime().toString(),
+        text: data.extract || "I'm sorry, I could not find any information on that topic.Please just send the key word for me",
+        createdAt: new Date(),
+        user: { _id: 2, name: "ChatBot" },
+      });
+    } catch (error) {
+      // Handle errors here and return a specific message
+      botMessages.push({
+        _id: new Date().getTime().toString(),
+        text: "We cannot find this information. Please try again later.",
+        createdAt: new Date(),
+        user: { _id: 2, name: "ChatBot" },
+      });
+    }
     return botMessages;
+
   };
 
-    // return botMessages;
+  // return botMessages;
   // };
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.btn}><Text style={{ color: 'red' }}>back</Text></TouchableOpacity>
       <GiftedChat
         messages={messages}
         onSend={(newMessages) => onSend(newMessages)}
@@ -129,6 +151,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  btn: {
+    position: "absolute",
+    top: 50,
+    left: 5,
+
+  }
 });
 
 /*
