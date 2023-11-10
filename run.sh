@@ -4,4 +4,5 @@ expo doctor --fix-dependencies
 npx expo-doctor
 npx expo install --fix
 expo upgrade
-npx expo start
+
+expo start -c
