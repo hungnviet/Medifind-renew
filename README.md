@@ -3,7 +3,7 @@
 Make sure you already have npm
 1. Localize the network
 2. Install local expo in the project
-```
+```shell
 npm install expo 
 && npm i expo@49.0.16
 && expo doctor --fix-dependencies
@@ -12,4 +12,6 @@ npm install expo
 && npm install make-plural
 ```
 3. Start expo
-```npx expo start```
+```shell
+npx expo start
+```
