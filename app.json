@@ -30,7 +30,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [],
+    "plugins": [
+      "expo-localization"
+    ],
     "owner": "healthtect.solution",
     "extra": {
       "eas": {
