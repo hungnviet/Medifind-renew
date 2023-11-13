@@ -2,11 +2,11 @@
 
 ## Run the application
 
-Make sure you already have npm and expo
+Make sure you already have ```npm``` and ```expo```
 
-1. Localize the network (all devices must use the same network system).
+1. Localize network - all devices must use the same network system
 
-2. Fix/Upgrade expo
+2. Fix/Upgrade ```expo```
 
 ```shell
 npm install expo 
@@ -19,7 +19,7 @@ expo upgrade
 
 3. Start ```react-native```
 
-Sometimes, the bundler's cache is causing problems. You can clear it with these commands.
+Sometimes, the bundler's cache is causing problems. Clear it with these commands.
 
 For Metro (React Native's bundler):
 ```shell
