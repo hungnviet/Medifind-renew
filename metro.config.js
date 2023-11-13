@@ -1,8 +1,8 @@
-const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts
-const sourceExts = [ 'jsx', 'js', 'ts', 'tsx', 'json', 'svg', 'd.ts', 'mjs' ].concat(defaultSourceExts)
+// metro.config.js - see https://docs.expo.dev/guides/customizing-metro/#customizing
+const { getDefaultConfig } = require('expo/metro-config');
 
-module.exports = {
-  resolver: {
-    sourceExts
-  },
-}
+const config = getDefaultConfig(__dirname);
+
+config.watcher.additionalExts.push('mjs', 'cjs');
+
+module.exports = config;

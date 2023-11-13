@@ -34,15 +34,50 @@ expo start -c
 
 ## Fix dependencies
 
-The problem is some packages include some source files that Metro does not pick up by default. You can fix this by making sure the extension is included in the ```resolver.sourceExts``` setting in your ```metro.config.js``` like
+Some packages include some source files that Metro does not pick up by default. Fix this by making sure the extension is included in the ```resolver.sourceExts``` setting in your ```metro.config.js``` like
 
 ```typescript
-const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts
-const sourceExts = [ 'jsx', 'js', 'ts', 'tsx', 'json', 'svg', 'd.ts', 'mjs' ].concat(defaultSourceExts)
+// metro.config.js - see https://docs.expo.dev/guides/customizing-metro/#customizing
+const { getDefaultConfig } = require('expo/metro-config');
 
-module.exports = {
-  resolver: {
-    sourceExts
-  },
+const config = getDefaultConfig(__dirname);
+
+config.watcher.additionalExts.push('mjs', 'cjs');
+
+module.exports = config;
+```
+
+## Fix ```make_plural``` path
+
+Go to ```node_modules/i18n-js/dist/import/Pluralization.js``` and change:
+```typescript
+// import { en } from "make-plural";
+export function useMakePlural({ pluralizer, includeZero = true, ordinal = false, }) {
+    return function (_i18n, count) {
+        return [
+            includeZero && count === 0 ? "zero" : "",
+            pluralizer(count, ordinal),
+        ].filter(Boolean);
+    };
 }
+export const defaultPluralizer = useMakePlural({
+    pluralizer: (n: number | string, ord?: boolean) => "one" | "two" | "few" | "other",
+    includeZero: true,
+});
+export class Pluralization {
+    constructor(i18n) {
+        this.i18n = i18n;
+        this.registry = {};
+        this.register("default", defaultPluralizer);
+    }
+    register(locale, pluralizer) {
+        this.registry[locale] = pluralizer;
+    }
+    get(locale) {
+        return (this.registry[locale] ||
+            this.registry[this.i18n.locale] ||
+            this.registry["default"]);
+    }
+}
+//# sourceMappingURL=Pluralization.js.map
 ```
