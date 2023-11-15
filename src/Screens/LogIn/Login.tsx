@@ -44,20 +44,20 @@ export const Login = (props: LogInProps) => {
                         <Image source={require('./iamges/avatar.jpg')} style={styles.icon} />
                     </View>
 
-                    <Text style={{ fontWeight: 'bold' }}>Login as guess</Text>
+                    <Text style={{ fontWeight: 'bold' }}>Log in as a guest</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btn_option} onPress={() => alert('updating..')}>
                     <View style={styles.icon_container}>
                         <Image source={require('./iamges/Google_icon.jpg')} style={styles.icon} />
                     </View>
 
-                    <Text style={{ fontWeight: 'bold' }}>Login with google</Text>
+                    <Text style={{ fontWeight: 'bold' }}>Login with Google</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btn_option} onPress={() => alert('updating..',)}>
                     <View style={styles.icon_container}>
                         <Image source={require('./iamges/Facebook_icon.png')} style={styles.icon} />
                     </View>
-                    <Text style={{ fontWeight: 'bold' }}>Login with facebook</Text>
+                    <Text style={{ fontWeight: 'bold' }}>Login with Facebook</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.footer}>
@@ -128,6 +128,7 @@ const styles = StyleSheet.create(
             width: width - 50,
             height: 50,
             borderRadius: 20,
+            paddingLeft: 10
         },
         btn: {
             backgroundColor: '#407CE2',

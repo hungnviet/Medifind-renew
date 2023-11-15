@@ -15,51 +15,9 @@ export interface ISearchProps {
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
-const dataList: inforPobs[] = [
-  {
-    ten: "paradol",
-    lieuLuong: "500mg",
-    SDK: "123456789",
-    SQD: "456321987",
-    xuatSu: "Han Quoc",
-    congTy: "Congtay TNHH....",
-    dangBaoChe: "ran/long",
-    diaChiSX: "467 Lý Thường Kiệt, phường 7 Quận 10, Tp Hồ Chí Minh"
-  },
-  {
-    ten: "phosphalogen",
-    lieuLuong: "500mg",
-    SDK: "123456789",
-    SQD: "456321987",
-    xuatSu: "Han Quoc",
-    congTy: "Congtay TNHH....",
-    dangBaoChe: "ran/long",
-    diaChiSX: "467 Lý Thường Kiệt, phường 7 Quận 10, Tp Hồ Chí Minh"
-  },
-  {
-    ten: "paracetamol",
-    lieuLuong: "500mg",
-    SDK: "123456789",
-    SQD: "456321987",
-    xuatSu: "Han Quoc",
-    congTy: "Congtay TNHH....",
-    dangBaoChe: "ran/long",
-    diaChiSX: "467 Lý Thường Kiệt, phường 7 Quận 10, Tp Hồ Chí Minh"
-  },
-  {
-    ten: "hapacol",
-    lieuLuong: "500mg",
-    SDK: "123456789",
-    SQD: "456321987",
-    xuatSu: "Han Quoc",
-    congTy: "Congtay TNHH....",
-    dangBaoChe: "ran/long",
-    diaChiSX: "467 Lý Thường Kiệt, phường 7 Quận 10, Tp Hồ Chí Minh"
-  }
-]
 interface inforPobs {
   ten: string,
-  lieuLuong: string,
+  hoatChatChinh: string,
   SDK: string,
   SQD: string,
   xuatSu: string,
@@ -70,14 +28,14 @@ interface inforPobs {
 export function InforContainer({ infor }: { infor: inforPobs }) {
   return (
     <View style={{
-      backgroundColor: 'white', width: width * 6 / 7, borderRadius: 8, borderColor: color.grey_light, marginTop: 10, borderWidth: 2, paddingTop: 12, paddingLeft: 15, paddingRight: 15, shadowOffset: { width: -5, height: 5, },
+      backgroundColor: 'white', width: width * 8 / 9, borderRadius: 8, borderColor: color.grey_light, marginTop: 10, borderWidth: 2, paddingTop: 12, paddingLeft: 15, paddingRight: 15, shadowOffset: { width: -5, height: 5, },
       shadowColor: '#171717',
       shadowOpacity: 0.6,
       shadowRadius: 3,
     }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%' }}>
+      <View style={{ flexDirection:'column', justifyContent: 'space-around', width: '100%' }}>
         <Text style={{ fontSize: 18, textTransform: 'uppercase', fontWeight: 'bold' }}>{infor.ten}</Text>
-        <Text style={{ fontSize: 16 }}>{infor.lieuLuong}</Text>
+        <Text style={{ fontSize: 12 }}>Hoạt chất chính: {infor.hoatChatChinh}</Text>
       </View>
       <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
         <Text style={{ fontSize: 12 }}>SĐK :{infor.SDK}</Text>
@@ -128,9 +86,25 @@ export const Search = (props: ISearchProps) => {
         console.error("Error searching for medicine:", error);
       });
  */
-    const text = searchText.toLowerCase();
-    const res: inforPobs[] = dataList.filter(el => el.ten === text);
-    setSearchResult(res);
+    /*
+        const text = searchText.toLowerCase();
+        const res: inforPobs[] = dataList.filter(el => el.ten === text);
+        setSearchResult(res);
+        */
+    fetch(`http://192.168.1.13:3000/api/v1/drug/${searchText}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setLoading(false);
+        if (data.status === "success") {
+          setSearchResult(data.data.result);
+        } else {
+          console.error("Error searching for medicine: Invalid response status");
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.error("Error searching for medicine:", error);
+      });
   };
   function handleAgain() {
     setLoading(false);
@@ -139,10 +113,6 @@ export const Search = (props: ISearchProps) => {
     setSearchText("");
 
   };
-
-
-
-
   return (
     <View style={styles.container}>
       <View style={styles.search_bar_container}>

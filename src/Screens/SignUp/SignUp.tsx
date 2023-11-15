@@ -24,22 +24,19 @@ export const SignUp = (props: SignUpProps) => {
             </View>
             <View style={styles.title_container}>
                 <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Registration</Text>
-                <Text style={{ textAlign: 'center' }}>We strive to make a positive impact on the healthcare industry by creating innovative solutions that solve real-world problems.</Text>
             </View>
             <View style={styles.form_container}>
                 <View style={{ rowGap: 10 }}>
-                    <TextInput placeholder='Input your phone number' style={styles.input} value={inputPhoneNumber} onChangeText={newText => setInputPhoneNumber(newText)}></TextInput>
-                    <TextInput placeholder='Set password' style={styles.input} value={inputPassword} onChangeText={newText => setInputPassword(newText)}></TextInput>
-                    <TextInput placeholder='What is your name?' style={styles.input} value={inputName} onChangeText={newText => setInputName(newText)}></TextInput>
-                    <TextInput placeholder='What is your gender (male/female)?' style={styles.input} value={inputGender} onChangeText={newText => setInputGender(newText)}></TextInput>
-                    <TextInput placeholder='How old are you?' style={styles.input} value={inputAge} onChangeText={newText => setInputAge(newText)}></TextInput>
+                    <TextInput placeholder='Your phone number' style={styles.input} value={inputPhoneNumber} onChangeText={newText => setInputPhoneNumber(newText)}></TextInput>
+                    <TextInput placeholder='Password' style={styles.input} value={inputPassword} onChangeText={newText => setInputPassword(newText)}></TextInput>
+                    <TextInput placeholder='Full name' style={styles.input} value={inputName} onChangeText={newText => setInputName(newText)}></TextInput>
                 </View>
                 <View style={{ flexDirection: 'row' }}>
-                    <Text style={{ color: '#B4BAC9', fontSize: 16 }}>
+                    <Text style={{ fontSize: 16, fontWeight: '500', }}>
                         Read the
                     </Text>
-                    <TouchableOpacity onPress={() => alert(`${term}`)}><Text style={{ fontSize: 16, fontWeight: '500', textDecorationLine: 'underline' }}>Term </Text></TouchableOpacity>
-                    <Text style={{ color: '#B4BAC9', fontSize: 16 }}>and </Text>
+                    <TouchableOpacity onPress={() => alert(`${term}`)}><Text style={{ fontSize: 16, fontWeight: '500', textDecorationLine: 'underline' }}>Terms </Text></TouchableOpacity>
+                    <Text style={{ fontSize: 16, fontWeight: '500', }}>and </Text>
                     <TouchableOpacity onPress={() => alert(`${policy}`)}><Text style={{ fontSize: 16, fontWeight: '500', textDecorationLine: 'underline' }}>Privacy policy</Text></TouchableOpacity>
                 </View>
 
@@ -53,20 +50,20 @@ export const SignUp = (props: SignUpProps) => {
                         <Image source={require('./iamges/Apple_icon.png')} style={styles.icon} />
                     </View>
 
-                    <Text style={{ fontWeight: 'bold' }}>Sign up with apple ID</Text>
+                    <Text style={{ fontWeight: 'bold' }}>Sign up with Apple ID</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btn_option} onPress={() => alert('updating..')}>
                     <View style={styles.icon_container}>
                         <Image source={require('./iamges/Google_icon.jpg')} style={styles.icon} />
                     </View>
 
-                    <Text style={{ fontWeight: 'bold' }}>Sign up with google</Text>
+                    <Text style={{ fontWeight: 'bold' }}>Sign up with Google</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btn_option} onPress={() => alert('updating..')}>
                     <View style={styles.icon_container}>
                         <Image source={require('./iamges/Facebook_icon.png')} style={styles.icon} />
                     </View>
-                    <Text style={{ fontWeight: 'bold' }}>Sign up with facebook</Text>
+                    <Text style={{ fontWeight: 'bold' }}>Sign up with Facebook</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.footer}>
@@ -133,7 +130,7 @@ const styles = StyleSheet.create(
             borderColor: 'grey',
             borderWidth: 2,
             width: width - 50,
-            height: 40,
+            height: 60,
             borderRadius: 20,
             paddingLeft: 20
         },

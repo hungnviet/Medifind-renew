@@ -22,21 +22,21 @@ const slides = [
     image: require("../../../assets/welcome_1.png"),
     title: "Know Every Pill\nYou Take",
     subtitle:
-      "Scan your prescription and see  what you have to take.\nNo need to find information manually.\nMediFind take care all steps.",
+      "Scan your prescription to see what you need to \nensure you take the proper medication.\nMediFind takes care of all the necessary steps.",
   },
   {
     id: "2",
     image: require("../../../assets/welcome_2.png"),
     title: "Control Your\nConsumption",
     subtitle:
-      "MediFind saves all your scanned pills\nto analyze the amount of drugs you have taken.\nYou will be protected from antibiotic abuse.",
+      "MediFind records all pill scans to track medication intake. \nYou will be shielded from the harms of antibiotic misuse.",
   },
   {
     id: "3",
     image: require("../../../assets/welcome_3.png"),
     title: "Make Your Life Healthier\nMake Our World Better",
     subtitle:
-      "Our mission is raising the attention about drug abuse,\nspecially antibiotic abuse.\nThe rising of antibiotic abuse is endangering out future.",
+      "Our mission is to raise awareness about drug \nabuse,especially the misuse of antibiotics.\nThe increasing misuse of antibiotics is putting our future at risk.",
   },
 ];
 

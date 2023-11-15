@@ -14,28 +14,7 @@ import { GiftedChat } from "react-native-gifted-chat";
 export interface IChatMediGPTProps {
   onNavigate: (string: ChatScreens) => void;
 }
-/*
-export const ChatMediGPT = (props: IChatMediGPTProps) => {
-  const { onNavigate } = props;
 
-  return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <Text>Updating...</Text>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: themeVariables.backgroundColor,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-  },
-});
-*/
 
 export const ChatMediGPT: React.FC = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -52,62 +31,44 @@ export const ChatMediGPT: React.FC = () => {
           setMessages((prevMessages) =>
             GiftedChat.append(prevMessages, botResponse)
           );
-        }, 50);
+        }, 0);
       }
     }
   };
-  // const getChatBotResponse = (userMessage: string): IMessage[] => {
-  //   // Simulate a chatbot response based on user input
-  //   const botMessages: IMessage[] = [];
-
-  //   if (userMessage.toLowerCase().includes("health solution")) {
-  //     botMessages.push({
-  //       _id: new Date().getTime().toString(),
-  //       text: "Of course, I'd be happy to help. Can you please describe your symptoms or what's been bothering you?",
-  //       createdAt: new Date(),
-  //       user: { _id: 2, name: "ChatBot" },
-  //     });
-  //   } else if (userMessage.toLowerCase().includes("headache") || userMessage.toLowerCase().includes("sore throat")) {
-  //     botMessages.push({
-  //       _id: new Date().getTime().toString(),
-  //       text: "I'm sorry to hear that. Headaches, sore throats, and fatigue can have various causes. Have you taken any medication or tried any remedies so far?",
-  //       createdAt: new Date(),
-  //       user: { _id: 2, name: "ChatBot" },
-  //     });
-  //   } else if (userMessage.toLowerCase().includes("over-the-counter pain relievers") || userMessage.toLowerCase().includes("tea with honey")) {
-  //     botMessages.push({
-  //       _id: new Date().getTime().toString(),
-  //       text: "It's good that you've tried some home remedies. However, persistent symptoms like these may require a more detailed evaluation. I recommend that you consult with a healthcare professional for a proper diagnosis. They can provide you with personalized advice and treatment options.",
-  //       createdAt: new Date(),
-  //       user: { _id: 2, name: "ChatBot" },
-  //     });
-  //   } else {
-  //     botMessages.push({
-  //       _id: new Date().getTime().toString(),
-  //       text: "I recommend that you consult with a healthcare professional for a proper diagnosis. They can provide you with personalized advice and treatment options.",
-  //       createdAt: new Date(),
-  //       user: { _id: 2, name: "ChatBot" },
-  //     });
-  //   }
-
+  /*
   const getChatBotResponse = async (userMessage: string): Promise<IMessage[]> => {
-    // Send a request to the Wikipedia API
-    /*
-    const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(userMessage)}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-   
+    const botMessages: IMessage[] = [];
+    const obj = { message: { userMessage } };
+    try {
+      const response = await fetch(`(http://192.168.1.13:3000/api/v1/chatBot`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(obj)
+      });
       const data = await response.json();
 
-      const botMessages: IMessage[] = [{
+      botMessages.push({
         _id: new Date().getTime().toString(),
-        text: data.extract || "I'm sorry, I could not find any information on that topic.",
+        text: data.reply.reply || "I'm sorry, I could not find any information on that topic.Please just send the key word for me",
         createdAt: new Date(),
         user: { _id: 2, name: "ChatBot" },
-      }];
-      return botMessages;
-*/
+      });
+    } catch (error) {
+      // Handle errors here and return a specific message
+      botMessages.push({
+        _id: new Date().getTime().toString(),
+        text: "We cannot find this information. Please try again later.",
+        createdAt: new Date(),
+        user: { _id: 2, name: "ChatBot" },
+      });
+    }
+    return botMessages;
+
+  };
+  */
+  const getChatBotResponse = async (userMessage: string): Promise<IMessage[]> => {
     const botMessages: IMessage[] = [];
     try {
       const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(userMessage)}`);
@@ -131,9 +92,6 @@ export const ChatMediGPT: React.FC = () => {
     return botMessages;
 
   };
-
-  // return botMessages;
-  // };
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.btn}><Text style={{ color: 'red' }}>back</Text></TouchableOpacity>

@@ -131,7 +131,8 @@ export const Home = (props: IHomeProps) => {
         <View style={styles.anual_prophylaxis} >
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{ color: color.grey_white, fontWeight: '600', fontSize: 16, marginBottom: 10 }}>Get vaccinated</Text>
-            <Text style={{ color: color.grey_white, fontWeight: '300', fontSize: 12, textAlign: 'left', marginLeft: 12 }}>Take the reminder vaccine for improving antibody against covid19</Text>
+            <Text style={{ color: color.grey_white, fontWeight: '300', fontSize: 12, textAlign: 'left', marginLeft: 12 }}>To improve the effectiveness of antibiotics against COVID-19, it is recommended to take the booster vaccine.
+            </Text>
           </View>
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Image source={require('./iamges/covid.jpg')} style={{ width: '90%', height: '90%', borderRadius: 70 }} />
