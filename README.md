@@ -1,12 +1,12 @@
-# MediFind+ New Version
+# MediFind New Version
 
 ## Run the application
 
-Make sure you already install ```npm``` and ```expo```
+Make sure you already install NodeJS and Expo
 
 1. Localize network: All devices must use the same network system.
 
-2. Fix/Upgrade ```expo```
+2. Fix/Upgrade ```expo``` (làm một lần duy nhất thôi nhé)
 
 ```shell
 npm install expo 
@@ -17,39 +17,12 @@ npx expo install --fix
 expo upgrade
 ```
 
-3. Start ```react-native```
-
-Sometimes, the bundler's cache is causing problems. Clear it with these commands.
-
-For Metro (React Native's bundler):
+3. Run ```npm```
 ```shell
-npx react-native start --reset-cache
+npm install
 ```
 
-or:
-
-```shell
-expo start -c
-```
-
-## Fix dependencies
-
-Some packages include some source files that Metro does not pick up by default. Fix this by making sure the extension is included in the ```resolver.sourceExts``` setting in your ```metro.config.js``` like
-
-```typescript
-// metro.config.js - see https://docs.expo.dev/guides/customizing-metro/#customizing
-const { getDefaultConfig } = require('expo/metro-config');
-
-const config = getDefaultConfig(__dirname);
-
-config.watcher.additionalExts.push('mjs', 'cjs');
-
-module.exports = config;
-```
-
-## Fix ```make_plural``` path
-
-Go to ```node_modules/i18n-js/dist/import/Pluralization.js``` and change:
+4. (IMPORTANT: There are some problems with the versions of ```make_plural``) Go to the path ```node_modules/i18n-js/dist/import/Pluralization.js``` and change:
 ```typescript
 // import { en } from "make-plural";
 export function useMakePlural({ pluralizer, includeZero = true, ordinal = false, }) {
@@ -82,9 +55,20 @@ export class Pluralization {
 //# sourceMappingURL=Pluralization.js.map
 ```
 
-## Dành cho người không hiểu
+## Fix dependencies
 
-Git clone rồi git pull về rồi cứ chạy lệnh ```npx expo start``` thôi nha :)
+Some packages include some source files that Metro does not pick up by default. Fix this by making sure the extension is included in the ```resolver.sourceExts``` setting in your ```metro.config.js``` like
+
+```typescript
+// metro.config.js - see https://docs.expo.dev/guides/customizing-metro/#customizing
+const { getDefaultConfig } = require('expo/metro-config');
+
+const config = getDefaultConfig(__dirname);
+
+config.watcher.additionalExts.push('mjs', 'cjs');
+
+module.exports = config;
+```
 
 # Datasets
 ## Drugbank
