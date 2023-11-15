@@ -2,9 +2,9 @@
 
 ## Run the application
 
-Make sure you already have ```npm``` and ```expo```
+Make sure you already install ```npm``` and ```expo```
 
-1. Localize network - all devices must use the same network system
+1. Localize network: All devices must use the same network system.
 
 2. Fix/Upgrade ```expo```
 
@@ -81,3 +81,11 @@ export class Pluralization {
 }
 //# sourceMappingURL=Pluralization.js.map
 ```
+
+## Dành cho người không hiểu
+
+Git clone rồi git pull về rồi cứ chạy lệnh ```npx expo start``` thôi nha :)
+
+# Datasets
+## Drugbank
+## UMLS
