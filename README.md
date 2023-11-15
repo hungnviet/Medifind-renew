@@ -22,7 +22,7 @@ expo upgrade
 npm install
 ```
 
-4. (IMPORTANT: There are some problems with the versions of ```make_plural``) Go to the path ```node_modules/i18n-js/dist/import/Pluralization.js``` and change:
+4. (IMPORTANT: There are some problems with the versions of ```make_plural```) Go to the path ```node_modules/i18n-js/dist/import/Pluralization.js``` and change:
 ```typescript
 // import { en } from "make-plural";
 export function useMakePlural({ pluralizer, includeZero = true, ordinal = false, }) {
