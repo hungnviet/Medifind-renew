@@ -33,7 +33,7 @@ export function InforContainer({ infor }: { infor: inforPobs }) {
       shadowOpacity: 0.6,
       shadowRadius: 3,
     }}>
-      <View style={{ flexDirection:'column', justifyContent: 'space-around', width: '100%' }}>
+      <View style={{ flexDirection: 'column', justifyContent: 'space-around', width: '100%' }}>
         <Text style={{ fontSize: 18, textTransform: 'uppercase', fontWeight: 'bold' }}>{infor.ten}</Text>
         <Text style={{ fontSize: 12 }}>Hoạt chất chính: {infor.hoatChatChinh}</Text>
       </View>
@@ -91,7 +91,7 @@ export const Search = (props: ISearchProps) => {
         const res: inforPobs[] = dataList.filter(el => el.ten === text);
         setSearchResult(res);
         */
-    fetch(`http://192.168.1.13:3000/api/v1/drug/${searchText}`)
+    fetch(`http://192.168.1.91:3000/api/v1/drug/${searchText}`)
       .then((response) => response.json())
       .then((data) => {
         setLoading(false);
