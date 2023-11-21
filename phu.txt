@@ -1,2 +1,0 @@
-name: Phu
-MSSV: 225217

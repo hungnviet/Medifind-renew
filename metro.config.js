@@ -3,6 +3,6 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-config.watcher.additionalExts.push('mjs', 'cjs');
+config.watcher.additionalExts.push('mjs', 'cjs', 'jsx');
 
 module.exports = config;
