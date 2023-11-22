@@ -3,20 +3,33 @@ import { useState } from 'react';
 import { RootScreens } from "..";
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
-
-
+import { auth } from '../firebase';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 export interface SignUpProps {
     onNavigate: (screen: RootScreens) => void;
 }
 export const SignUp = (props: SignUpProps) => {
     const { onNavigate } = props;
-    const [inputPhoneNumber, setInputPhoneNumber] = useState<string>("");
+    const [inputEmail, setInputEmail] = useState<string>("");
     const [inputPassword, setInputPassword] = useState<string>("");
-    const [inputName, setInputName] = useState<string>("");
-    const [inputGender, setInputGender] = useState<string>("");
-    const [inputAge, setInputAge] = useState<string>("");
+    const [inputConfirm, setInputConfirm] = useState<string>("");
     const term: String = " điền khoản gì minhf them vo sau ";
     const policy: String = "chính sách bảo mật:....";
+    const onSignUpSuccess = () => {
+        onNavigate(RootScreens.LOGIN);
+    };
+    const handleSignUp = async (inputEmail: string, inputPassword: string, onSignUpSuccess: () => void): Promise<void> => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, inputEmail, inputPassword);
+            const user = userCredential.user;
+            console.log('Registered with:', user?.email);
+            onSignUpSuccess();
+        } catch (error: any) {
+            if (error.message === "Firebase: Error (auth/email-already-in-use).") {
+                alert("Email has been used.");
+            }
+        }
+    }
     return (
         <View style={styles.container}>
             <View style={styles.logo_container}>
@@ -27,9 +40,9 @@ export const SignUp = (props: SignUpProps) => {
             </View>
             <View style={styles.form_container}>
                 <View style={{ rowGap: 10 }}>
-                    <TextInput placeholder='Your phone number' style={styles.input} value={inputPhoneNumber} onChangeText={newText => setInputPhoneNumber(newText)}></TextInput>
-                    <TextInput placeholder='Password' style={styles.input} value={inputPassword} onChangeText={newText => setInputPassword(newText)}></TextInput>
-                    <TextInput placeholder='Full name' style={styles.input} value={inputName} onChangeText={newText => setInputName(newText)}></TextInput>
+                    <TextInput placeholder='Your Email' style={styles.input} value={inputEmail} onChangeText={newText => setInputEmail(newText)}></TextInput>
+                    <TextInput placeholder='Password' style={styles.input} value={inputPassword} onChangeText={newText => setInputPassword(newText)} secureTextEntry></TextInput>
+                    <TextInput placeholder='Confirm your password again' style={styles.input} value={inputConfirm} onChangeText={newText => setInputConfirm(newText)} secureTextEntry></TextInput>
                 </View>
                 <View style={{ flexDirection: 'row' }}>
                     <Text style={{ fontSize: 16, fontWeight: '500', }}>
@@ -40,7 +53,7 @@ export const SignUp = (props: SignUpProps) => {
                     <TouchableOpacity onPress={() => alert(`${policy}`)}><Text style={{ fontSize: 16, fontWeight: '500', textDecorationLine: 'underline' }}>Privacy policy</Text></TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.btn} onPress={() => onNavigate(RootScreens.LOGIN)}>
+                <TouchableOpacity style={styles.btn} onPress={() => handleSignUp(inputEmail, inputPassword, onSignUpSuccess)}>
                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>Continue</Text>
                 </TouchableOpacity>
             </View>

@@ -3,7 +3,8 @@ import { RootScreens } from "..";
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 import { useState } from "react"
-
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export interface LogInProps {
     onNavigate: (screen: RootScreens) => void;
@@ -13,14 +14,24 @@ export const Login = (props: LogInProps) => {
     const { onNavigate } = props;
     const [inputPhoneNumber, setInputPhoneNumber] = useState<string>("")
     const [inputPassWord, setInputPassWord] = useState<string>("")
-    async function handleSubmit(phoneNumber: string, passWord: string) {
-        const API = "https://api.medifindlabs.com";
-        const formdata = new FormData();
-        formdata.append("inputPhoneNumber", phoneNumber);
-        formdata.append("intputPassword", passWord);
-        fetch(API, { method: 'POST', body: formdata })
-            .then((response) => response.json())
-            .then((data) => { alert(`xong`) })
+    const onLogInSuccess = () => {
+        onNavigate(RootScreens.MAIN);
+    };
+    const handleLogIn = async (inputEmail: string, inputPassword: string, onLogInSuccess: () => void): Promise<void> => {
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, inputEmail, inputPassword);
+            const user = userCredential.user;
+            console.log('Registered with:', user?.email);
+            onLogInSuccess();
+        } catch (error: any) {
+            console.log(error.message);
+            if (error.message === "Firebase: Error (auth/missing-password).") {
+                alert("Please input the password!")
+            }
+            else {
+                alert("Email or password is incorrect. Please try again.")
+            }
+        }
     }
     return (
         <View style={styles.container}>
@@ -34,7 +45,7 @@ export const Login = (props: LogInProps) => {
             <View style={styles.form_container}>
                 <TextInput placeholder='Your phone number' style={styles.input} value={inputPhoneNumber} onChangeText={newText => setInputPhoneNumber(newText)}></TextInput>
                 <TextInput placeholder='Your password' style={styles.input} value={inputPassWord} onChangeText={newText => setInputPassWord(newText)} secureTextEntry></TextInput>
-                <TouchableOpacity style={styles.btn} onPress={() => handleSubmit(inputPhoneNumber, inputPassWord)}>
+                <TouchableOpacity style={styles.btn} onPress={() => handleLogIn(inputPhoneNumber, inputPassWord, onLogInSuccess)}>
                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>Log in</Text>
                 </TouchableOpacity>
             </View>

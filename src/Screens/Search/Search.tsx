@@ -91,7 +91,7 @@ export const Search = (props: ISearchProps) => {
         const res: inforPobs[] = dataList.filter(el => el.ten === text);
         setSearchResult(res);
         */
-    fetch(`http://192.168.1.91:3000/api/v1/drug/${searchText}`)
+    fetch(`https://medifind-be.icyisland-1cda38a3.australiaeast.azurecontainerapps.io/api/v1/drug/${searchText}`)
       .then((response) => response.json())
       .then((data) => {
         setLoading(false);
