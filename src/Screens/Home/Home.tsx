@@ -14,6 +14,22 @@ export interface IHomeProps {
   onNavigate: (string: MainScreens) => void;
 }
 
+export function TaskContainer({ time, taskList, color }: { time: string, taskList: string[], color: string }) {
+  return (
+    <View style={styles.each_schedule_container}>
+      <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{time}</Text>
+      <ScrollView style={{ height: "100%", backgroundColor: `${color}`, marginTop: 10, borderRadius: 20, padding: 10 }}>
+        {taskList.map(el => {
+          return (
+            <Text style={{ color: 'white', fontSize: 16 }}>{el}</Text>
+          )
+        })}
+      </ScrollView>
+    </View>
+  )
+
+}
+
 export const Home = (props: IHomeProps) => {
 
   const { onNavigate } = props;
@@ -29,117 +45,74 @@ export const Home = (props: IHomeProps) => {
       ]
     );
   };
+  let taskMorning: string[] = ["Medi A", "Medi B", "Medi C", "Medi A", "Medi B", "Medi C", "Medi A", "Medi B", "Medi C"]
+  let time1 = "Morning"
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.header_infor}>
-          <View style={styles.avatar}>
-            <Image source={require('./iamges/avatar.jpg')} style={{ height: 60, width: 60, borderRadius: 40 }} />
-          </View>
-          <View style={styles.user_in4}>
-            <Text style={{ color: '#B4BAC9' }}>Good morning</Text>
-            <Text style={{ fontWeight: '700' }}>X</Text>
-          </View>
-          <TouchableOpacity style={styles.mess_icon}>
-            <Image source={require('./iamges/message_icon.png')} style={{ height: 40, width: 40, borderRadius: 40 }} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.notice_icon}>
-            <Image source={require('./iamges/notice_icon.png')} style={{ height: 40, width: 40, borderRadius: 40 }} />
-          </TouchableOpacity>
-
-
+      <View style={styles.headerContainer}>
+        <View>
+          <Text style={styles.textHeader}>Find your desire health solution</Text>
         </View>
-        <View style={styles.header_search}>
-          <TextInput placeholder=' Medicine, Service' style={{ width: width - 40, height: 55, borderRadius: 10, backgroundColor: '#d3d3d3', paddingLeft: 25 }} />
-          <TouchableOpacity style={{ position: 'absolute', zIndex: 100, height: 55, width: 55, right: 0, justifyContent: 'center', alignItems: 'center' }}>
-            <Image source={require('./iamges/find.png')} style={{ height: 40, width: 40, borderRadius: 40 }} />
-          </TouchableOpacity>
+        <View>
+          <Image source={require('./iamges/notice_icon2.png')} />
         </View>
       </View>
-      <View style={styles.upcoming}>
-        <View style={styles.upcoming_header}>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: color.blue_black }}>
-            Upcoming Apointments
-          </Text>
+      <View style={styles.searchContainer}>
+        <TextInput placeholder="Search drugs,articles,..." style={styles.search}></TextInput>
+        <Image source={require('./iamges/find.png')} style={styles.find_icon} />
+      </View>
+      <View style={styles.functionContainer}>
+        <View style={styles.eachFunctionContainer}>
+          <TouchableOpacity style={styles.btn_function} onPress={() => onNavigate(MainScreens.SCAN)}>
+            <Image source={require('./iamges/scan.png')} style={styles.icon_function} />
+          </TouchableOpacity>
+          <Text style={{ color: "#A1A8B0" }}>Scan</Text>
+        </View>
+        <View style={styles.eachFunctionContainer} >
+          <TouchableOpacity style={styles.btn_function} onPress={() => onNavigate(MainScreens.CHAT)}>
+            <Image source={require('./iamges/mediGpt.png')} style={styles.icon_function} />
+          </TouchableOpacity>
+          <Text style={{ color: "#A1A8B0" }}>Chat</Text>
+        </View>
+        <View style={styles.eachFunctionContainer}>
+          <TouchableOpacity style={styles.btn_function} onPress={() => onNavigate(MainScreens.SEARCH)}>
+            <Image source={require('./iamges/pharmacy.png')} style={styles.icon_function} />
+          </TouchableOpacity>
+          <Text style={{ color: "#A1A8B0" }}>Pharmacy</Text>
+        </View>
+        <View style={styles.eachFunctionContainer}>
+          <TouchableOpacity style={styles.btn_function} onPress={() => onNavigate(MainScreens.SCHEDULE)}>
+            <Image source={require('./iamges/calendar.png')} style={styles.icon_function} />
+          </TouchableOpacity>
+          <Text style={{ color: "#A1A8B0" }}>Reminder</Text>
+        </View>
+
+      </View>
+      <View style={styles.bannerContainer}>
+        <View style={styles.banner_content}>
+          <Text style={{ color: "#E8F3F1", fontWeight: '600', fontSize: 16, width: width / 2 }}>Early protection for your family health</Text>
+          <TouchableOpacity style={{ backgroundColor: "#11399F", width: 130, alignItems: 'center', height: 40, justifyContent: 'center', borderRadius: 20 }}>
+            <Text style={{ color: "white", fontWeight: 'bold' }}>Learn more</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.banner_img}>
+          <Image source={require("./iamges/newDoctor.png")} style={{ width: "100%", height: "90%" }} />
+        </View>
+      </View>
+      <View style={styles.scheduleContainer}>
+        <View style={styles.schedule_header}>
+          <Text style={{ fontWeight: 'bold' }}>To date schedule</Text>
           <TouchableOpacity>
-            <Text style={{ fontSize: 14, fontWeight: '500', color: '#407CE2' }}>
-              See all
-            </Text>
+            <Text style={{ color: "#199A8E" }}>See all</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.upcoming_in4} >
-          <View style={styles.upcoming_img}>
-            <Image source={require('./iamges/Doctor.png')} style={{ height: 120, width: 120, borderRadius: 80 }} />
-
-
-          </View>
-          <View style={styles.upcoming_content}>
-            <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'white' }}>Take The Pill</Text>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: 'white', marginTop: 10 }}>Metformin</Text>
-            <Text style={{ fontSize: 12, color: 'white' }}>Note: Take it before meal</Text>
-            <Text style={{ fontSize: 12, color: 'white' }}>10:00-10:30 AM</Text>
-          </View>
-
-
-        </View>
-
-
-      </View>
-      <View style={styles.features}  >
-        <Text style={{ marginLeft: 20, fontSize: 16, fontWeight: '700', color: color.blue_black }}>
-          Service
-        </Text>
-        <ScrollView horizontal={true} style={{ marginLeft: 10, marginRight: 10 }} showsHorizontalScrollIndicator={false}>
-          <View style={styles.feature} >
-            <View style={{ flex: 3, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 15, paddingLeft: 1 }}>Medication reminder</Text>
-              <TouchableOpacity style={{ backgroundColor: color.blue_normal, justifyContent: 'center', alignItems: 'center', width: '60%', height: '30%', borderRadius: 40 }} onPress={() => onNavigate(MainScreens.SCHEDULE)}>
-
-
-                <Text style={{ fontWeight: 'bold', color: color.grey_white }}>Set up now</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ flex: 2, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-              <Image source={require('./iamges/calendarRed.jpg')} style={{ height: '80%', width: '80%', }} />
-            </View>
-          </View>
-          <View style={styles.feature}>
-            <View style={{ flex: 2, marginLeft: 12 }}>
-              <Text style={{ fontWeight: '700', fontSize: 16 }}>MediGPT</Text>
-              <Text style={{ fontWeight: '300', fontSize: 12 }}>Chat bot powered by chat GPT</Text>
-              <TouchableOpacity style={{ backgroundColor: color.blue_normal, width: '50%', height: '25%', justifyContent: 'center', alignItems: 'center', borderRadius: 30 }} onPress={() => onNavigate(MainScreens.CHAT)}>
-                <Text style={{ color: color.grey_white }}>Try now</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ flex: 1, height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-              <Image source={require('./iamges/mediGPT.jpg')} style={{ height: '80%', width: '100%', borderRadius: 50 }} />
-            </View>
-          </View>
-          <View style={styles.feature}>
-            <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center', rowGap: 20 }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Scan your prescription</Text>
-              <TouchableOpacity style={{ backgroundColor: color.blue_normal, width: '50%', height: '30%', justifyContent: 'center', alignItems: 'center', borderRadius: 30 }}
-                onPress={() => onNavigate(MainScreens.SCAN)}>
-                <Text style={{ fontWeight: 'bold', color: color.grey_white }}>Scan now</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+        <ScrollView horizontal >
+          <TaskContainer key={1} time={time1} taskList={taskMorning} color="#407CE2" />
+          <TaskContainer key={2} time="Afternoon" taskList={taskMorning} color="#E0CF33" />
+          <TaskContainer key={3} time="Evening" taskList={taskMorning} color="#588157" />
         </ScrollView>
-      </View >
-      <View style={styles.prophylaxis}>
-        <Text style={{ fontSize: 16, fontWeight: 'bold', color: color.blue_dark, marginLeft: 20, marginBottom: 10 }}>Annual prophylaxis</Text>
-        <View style={styles.anual_prophylaxis} >
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ color: color.grey_white, fontWeight: '600', fontSize: 16, marginBottom: 10 }}>Get vaccinated</Text>
-            <Text style={{ color: color.grey_white, fontWeight: '300', fontSize: 12, textAlign: 'left', marginLeft: 12 }}>To improve the effectiveness of antibiotics against COVID-19, it is recommended to take the booster vaccine.
-            </Text>
-          </View>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Image source={require('./iamges/covid.jpg')} style={{ width: '90%', height: '90%', borderRadius: 70 }} />
-          </View>
-        </View>
       </View>
-    </View >
+    </View>
 
   );
 };
@@ -150,167 +123,96 @@ const styles = StyleSheet.create(
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      rowGap: 10,
-      paddingTop: 50,
-      backgroundColor: 'white',
-      paddingBottom: 20
+      paddingTop: height / 20,
     },
-    header: {
+    headerContainer: {
       flex: 3,
-      width: width,
-      justifyContent: 'center',
-      alignItems: 'center',
-
-
-    },
-    upcoming: {
-      flex: 5,
-      width: width,
-
-    },
-    features: {
-      flex: 5,
-      width: width,
-      rowGap: 10
-
-    },
-    feature: {
-      borderWidth: 2, borderColor: '#B4BAC9', height: height / 6, width: width - 40, marginLeft: 10, marginRight: 10, borderRadius: 30,
+      width: width - 20,
       flexDirection: 'row',
-      justifyContent: 'center',
       alignItems: 'center',
-
-
+      justifyContent: 'space-between'
     },
-
-    prophylaxis: {
-      flex: 5,
-      width: width
-    },
-    header_infor: {
-      flexDirection: 'row',
-      flex: 3,
-      justifyContent: 'center',
-      alignItems: 'center',
-      columnGap: 10
-    },
-    avatar: {
-      flex: 1,
-      marginRight: 10,
-      marginLeft: 15
-
-    },
-    user_in4: {
-      flex: 4,
-      flexDirection: 'column',
-      justifyContent: 'flex-start'
-
-    },
-    mess_icon: {
-      flex: 1,
-      height: '80%',
-      justifyContent: 'center',
-      alignItems: 'center',
-
-    },
-    notice_icon: {
-      flex: 1,
-      height: '80%',
+    searchContainer: {
+      flex: 2,
+      width: width - 20,
       justifyContent: 'center',
       alignItems: 'center'
     },
-
-    header_search: {
-      flex: 2,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-
-    upcoming_header: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingRight: 20,
-      paddingLeft: 20,
-
-    },
-    upcoming_in4: {
-      backgroundColor: '#407CE2',
-      flex: 4,
-      flexDirection: 'row',
-      columnGap: 10,
-      marginLeft: 20,
-      marginRight: 20,
-      borderRadius: 10
-    },
-    anual_prophylaxis: {
+    functionContainer: {
       flex: 3,
+      width: width - 20,
       flexDirection: 'row',
-      columnGap: 10,
-      marginLeft: 20,
-      marginRight: 20,
-      borderRadius: 10,
-      backgroundColor: '#407CE2'
-    },
-    upcoming_img: {
-      flex: 2,
-      justifyContent: 'center',
+      justifyContent: 'space-around',
       alignItems: 'center'
-
     },
-    upcoming_content: {
-      flex: 3,
-      justifyContent: 'center',
-      rowGap: 3
-
-    },
-    iconContainer: {
-      width: 30,
-      height: 30,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    Icon: {
-      height: '100%',
-      width: '100%'
-    },
-    activityComponent: {
+    bannerContainer: {
+      flex: 5,
+      backgroundColor: "#5390d9",
+      width: width - 20,
       flexDirection: "row",
-      backgroundColor: themeVariables.backgroundColor,
-      width: "100%",
-      height: 80,
-      borderRadius: 20,
+      marginTop: 20,
+      marginBottom: 20,
+      borderRadius: 20
+    },
+    scheduleContainer: {
+      flex: 7,
+      width: width - 20,
+    },
+    textHeader: {
+      fontSize: 20,
+      width: width / 2,
+      fontWeight: 'bold'
+    },
+    search: {
+      borderColor: 'grey',
       borderWidth: 1,
-      borderColor: themeVariables.lightGraySecondaryTextColor,
-      marginVertical: 5,
-    },
-    thumbnailContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    thumbnail: {
-      resizeMode: "contain",
-      width: 50,
+      width: 9 * (width / 10),
       height: 50,
+      borderRadius: 30,
+      paddingLeft: 40
     },
-    contentContainer: {
-      flex: 3,
-      marginVertical: 5,
+    find_icon: {
+      position: 'absolute',
+      left: 20
     },
-    titleContainer: {
+    eachFunctionContainer: {
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    btn_function: {
+      height: 70,
+      width: 70,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: "#FFFFFF",
+      borderRadius: 20
+    },
+    icon_function: {
+      height: '60%',
+      width: '60%',
+    },
+    banner_content: {
+      flex: 2,
+      justifyContent: 'center',
+      paddingLeft: 20,
+      rowGap: 15
+    },
+    banner_img: {
       flex: 1,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingLeft: 15
     },
-    categoryContainer: {
-      flex: 1,
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
+    schedule_header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between'
     },
+    each_schedule_container: {
+      width: 3 * width / 4,
+      height: "80%",
+      marginTop: 20,
+      marginRight: 20
+    }
 
   }
 )

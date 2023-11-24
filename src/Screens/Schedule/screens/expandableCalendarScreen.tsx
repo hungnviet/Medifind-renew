@@ -3,6 +3,302 @@ import { StyleSheet, View, Text, TextInput, Dimensions, TouchableOpacity, Toucha
 import moment from 'moment';
 import Swiper from 'react-native-swiper';
 import { ScrollView } from 'native-base';
+interface Props {
+  weekView?: boolean;
+}
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
+interface MyTask {
+  name: string,
+  quantity: string,
+  note: string
+}
+let listTaskMorning: MyTask[] = [{ name: "Medi A", quantity: "1 packet", note: "before eating" }, { name: "Medi A", quantity: "1 packet", note: "before eating" }, { name: "Medi A", quantity: "1 packet", note: "before eating" }, { name: "Medi A", quantity: "1 packet", note: "before eating" }]
+let listTaskAfternoon: MyTask[] = [{ name: "Medi B", quantity: "1 packet", note: "before eating" }, { name: "Medi B", quantity: "1 packet", note: "before eating" }, { name: "Medi B", quantity: "1 packet", note: "before eating" }, { name: "Medi B", quantity: "1 packet", note: "before eating" }]
+let listTaskEvening: MyTask[] = [{ name: "Medi C", quantity: "1 packet", note: "before eating" }, { name: "Medi C", quantity: "1 packet", note: "before eating" }, { name: "Medi C", quantity: "1 packet", note: "before eating" }, { name: "Medi C", quantity: "1 packet", note: "before eating" }]
+export function MorningTask({ list }: { list: MyTask[] }) {
+  return (
+    <ScrollView >
+      {
+        list.map((el) => {
+          return (
+            <View style={styles.taskContainer} >
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{el.name}</Text>
+                <Text style={{ color: '#A1A8B0' }} >{el.quantity}</Text>
+              </View>
+              <Text>Note: {el.note}</Text>
+              <View style={styles.btn_container}>
+                <TouchableOpacity style={styles.btn_cancel}>
+                  <Text style={{ fontWeight: 'bold', color: '#A1A8B0' }}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn_done}>
+                  <Text style={{ fontWeight: 'bold', color: 'white' }}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )
+        })
+      }
+    </ScrollView>
+  )
+}
+
+export function AfternoonTask({ list }: { list: MyTask[] }) {
+  return (
+    <ScrollView >
+      {
+        list.map((el) => {
+          return (
+            <View style={styles.taskContainer} >
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{el.name}</Text>
+                <Text style={{ color: '#A1A8B0' }} >{el.quantity}</Text>
+              </View>
+              <Text>Note: {el.note}</Text>
+              <View style={styles.btn_container}>
+                <TouchableOpacity style={styles.btn_cancel}>
+                  <Text style={{ fontWeight: 'bold', color: '#A1A8B0' }}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn_done}>
+                  <Text style={{ fontWeight: 'bold', color: 'white' }}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )
+        })
+      }
+    </ScrollView>
+  )
+}
+
+export function EveningTask({ list }: { list: MyTask[] }) {
+  return (
+    <ScrollView >
+      {
+        list.map((el) => {
+          return (
+            <View style={styles.taskContainer} >
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{el.name}</Text>
+                <Text style={{ color: '#A1A8B0' }} >{el.quantity}</Text>
+              </View>
+              <Text>Note: {el.note}</Text>
+              <View style={styles.btn_container}>
+                <TouchableOpacity style={styles.btn_cancel}>
+                  <Text style={{ fontWeight: 'bold', color: '#A1A8B0' }}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn_done}>
+                  <Text style={{ fontWeight: 'bold', color: 'white' }}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )
+        })
+      }
+    </ScrollView>
+  )
+}
+const ExpandableCalendarScreen = (props: Props) => {
+  const swiper = useRef();
+  const [value, setValue] = useState(new Date());
+  const [week, setWeek] = useState(0);
+  /// manage date time
+  const weeks = React.useMemo(() => {
+    const start = moment().add(week, 'weeks').startOf('week');
+
+    return [-1, 0, 1].map(adj => {
+      return Array.from({ length: 7 }).map((_, index) => {
+        const date = moment(start).add(adj, 'week').add(index, 'day');
+
+        return {
+          weekday: date.format('ddd'),
+          date: date.toDate(),
+        };
+      });
+    });
+  }, [week]);
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+  const currentHour = currentDate.getHours();
+  const currentMinute = currentDate.getMinutes();
+  const monthNames = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+    'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+  const [mode, setMode] = useState<string>("morning");
+  return (
+    <View style={styles.container}>
+      <View style={{ justifyContent: 'flex-start', width: width - 20 }}>
+        <Text style={{ fontWeight: 'bold', fontSize: 24, paddingLeft: 20 }}>Schedule</Text>
+      </View>
+      <View style={styles.picker}>
+        <Swiper
+          index={1}
+          //  ref={swiper}
+          loop={false}
+          showsPagination={false}
+          onIndexChanged={ind => {
+            if (ind === 1) {
+              return;
+            }
+            setTimeout(() => {
+              const newIndex = ind - 1;
+              const newWeek = week + newIndex;
+              setWeek(newWeek);
+              setValue(moment(value).add(newIndex, 'week').toDate());
+              //swiper.current.scrollTo(1, false);
+            }, 100);
+          }}>
+          {weeks.map((dates, index) => (
+            <View
+              style={[styles.itemRow, { paddingHorizontal: 16 }]}
+              key={index}>
+              {dates.map((item, dateIndex) => {
+                const isActive =
+                  value.toDateString() === item.date.toDateString();
+                return (
+                  <TouchableWithoutFeedback
+                    key={dateIndex}
+                    onPress={() => setValue(item.date)}>
+                    <View
+                      style={[
+                        styles.item,
+                        isActive && {
+                          backgroundColor: '#407CE2',
+                          borderColor: '#111',
+                        },
+                      ]}>
+                      <Text
+                        style={[
+                          styles.itemWeekday,
+                          isActive && { color: '#fff' },
+                        ]}>
+                        {item.weekday}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.itemDate,
+                          isActive && { color: '#fff' },
+                        ]}>
+                        {item.date.getDate()}
+                      </Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                );
+              })}
+            </View>
+          ))}
+        </Swiper>
+      </View>
+      <View style={styles.modeContainer}>
+        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "morning" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("morning")}>
+          <Text style={{ color: mode == "morning" ? "white" : "black" }}>Morning</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "afternoon" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("afternoon")}>
+          <Text style={{ color: mode == "afternoon" ? "white" : "black" }}>Afternoon</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "everning" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("everning")}>
+          <Text style={{ color: mode == "evening" ? "white" : "black" }}>Evening</Text>
+        </TouchableOpacity>
+      </View>
+
+      {mode == "morning" ? <MorningTask list={listTaskMorning} /> : mode == "afternoon" ? <AfternoonTask list={listTaskAfternoon} /> : <EveningTask list={listTaskEvening} />}
+
+    </View>
+  )
+}
+export default ExpandableCalendarScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: height / 15,
+    alignItems: 'center',
+    rowGap: 20
+  },
+  modeContainer: {
+    flexDirection: 'row',
+    width: width - 30,
+    justifyContent: 'space-between',
+    backgroundColor: '#bde0fe',
+    height: 60,
+    borderRadius: 10
+  },
+  taskContainer: {
+    borderWidth: 2,
+    marginTop: 5,
+    marginBottom: 5,
+    width: width - 30,
+    borderRadius: 10,
+    padding: 10,
+    rowGap: 10,
+    borderColor: "#edede9"
+  },
+  btn_container: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  btn_cancel: {
+    backgroundColor: "#bde0fe",
+    width: width / 3,
+    height: 48,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  btn_done: {
+    backgroundColor: "#407CE2",
+    width: width / 3,
+    height: 48,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  picker: {
+    maxHeight: 90,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemRow: {
+    width: width,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginHorizontal: -4,
+
+  },
+  item: {
+    flex: 1,
+    height: 60,
+    marginHorizontal: 4,
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#e3e3e3',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  itemWeekday: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#737373',
+    marginBottom: 4,
+  },
+  itemDate: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111',
+  },
+})
+
+/*import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { StyleSheet, View, Text, TextInput, Dimensions, TouchableOpacity, TouchableWithoutFeedback, } from 'react-native';
+import moment from 'moment';
+import Swiper from 'react-native-swiper';
+import { ScrollView } from 'native-base';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -274,3 +570,4 @@ const styles = StyleSheet.create({
     color: '#111',
   },
 });
+*/

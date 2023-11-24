@@ -108,7 +108,7 @@ export const ChatMediGPT: React.FC = () => {
           height: height / 18,
           marginLeft: 5,
           marginRight: 5,
-          marginBottom: isKeyboardVisible ? 5 : 5,
+          marginBottom: isKeyboardVisible ? 5 : 0,
         }}
       />
     );
