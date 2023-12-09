@@ -11,21 +11,23 @@ import { useState, useEffect } from "react";
 import { IMessage } from "react-native-gifted-chat";
 import { GiftedChat, InputToolbar, Send } from "react-native-gifted-chat";
 import { Icon } from "native-base";
+import { MainScreens } from "..";
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Keyboard } from 'react-native';
+
 export interface IChatMediGPTProps {
-  onNavigate: (string: ChatScreens) => void;
+  onNavigate: (string: MainScreens) => void;
 }
 
 
 
 
-export const ChatMediGPT: React.FC = () => {
+export const ChatMediGPT  = (props: IChatMediGPTProps) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-
+  const { onNavigate } = props;
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -119,9 +121,9 @@ export const ChatMediGPT: React.FC = () => {
       <TouchableOpacity style={{
         position: "absolute",
         top: 50,
-        left: 20, backgroundColor: '#407CE2', width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 30
+        left: 20, backgroundColor: '#407CE2', width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 30,zIndex:100
       }}
-        onPress={() => alert('helo')}>
+        onPress={() => onNavigate(MainScreens.HOME)}>
         <Ionicons name="home-outline" color={'white'} size={24} />
       </TouchableOpacity>
 

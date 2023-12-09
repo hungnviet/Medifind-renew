@@ -28,7 +28,23 @@ export const Scan = (props: IScanProps) => {
   const [camera, setCamera] = useState<Camera | null>();
   const [type, setType] = useState(CameraType.back);
   const navigation = useNavigation();
-
+  const sendPictureToApi = async (pictureData: CameraCapturedPicture) => {
+    try {
+      const response = await fetch('API', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pictureData,
+        }),
+      });
+      const data = await response.json();
+      console.log('API response:', data);
+    } catch (error) {
+      console.error('Error sending picture to API:', error);
+    }
+  };
   // Use camera
   useEffect(() => {
     (async () => {
@@ -56,6 +72,7 @@ export const Scan = (props: IScanProps) => {
         skipProcessing: false,
       });
       onCaptureSuccess(result);
+      //   sendPictureToApi(result);
     }
   };
 
@@ -71,6 +88,7 @@ export const Scan = (props: IScanProps) => {
     });
     if (!result.canceled) {
       onCaptureSuccess(result);
+      //   sendPictureToApi(result);
     }
   };
 

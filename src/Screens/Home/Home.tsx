@@ -45,7 +45,9 @@ export const Home = (props: IHomeProps) => {
       ]
     );
   };
-  let taskMorning: string[] = ["Medi A", "Medi B", "Medi C", "Medi A", "Medi B", "Medi C", "Medi A", "Medi B", "Medi C"]
+  let taskMorning: string[] = ["Paracetamol", "Phospholugel"]
+  let taskNoon: string[] = ["Cefpodoxime", "cenerta"];
+  let taskEvening: string[] = ["Cefena", "Cephalaxin"];
   let time1 = "Morning"
   return (
     <View style={styles.container}>
@@ -108,8 +110,8 @@ export const Home = (props: IHomeProps) => {
         </View>
         <ScrollView horizontal >
           <TaskContainer key={1} time={time1} taskList={taskMorning} color="#407CE2" />
-          <TaskContainer key={2} time="Afternoon" taskList={taskMorning} color="#E0CF33" />
-          <TaskContainer key={3} time="Evening" taskList={taskMorning} color="#588157" />
+          <TaskContainer key={2} time="Afternoon" taskList={taskNoon} color="#E0CF33" />
+          <TaskContainer key={3} time="Evening" taskList={taskEvening} color="#588157" />
         </ScrollView>
       </View>
     </View>

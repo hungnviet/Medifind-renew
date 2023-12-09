@@ -10,22 +10,21 @@ const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 interface MyTask {
   name: string,
-  quantity: string,
-  note: string
+  amount: string,
+  note: string,
+  state: string,
+  id: Number
 }
-let listTaskMorning: MyTask[] = [{ name: "Medi A", quantity: "1 packet", note: "before eating" }, { name: "Medi A", quantity: "1 packet", note: "before eating" }, { name: "Medi A", quantity: "1 packet", note: "before eating" }, { name: "Medi A", quantity: "1 packet", note: "before eating" }]
-let listTaskAfternoon: MyTask[] = [{ name: "Medi B", quantity: "1 packet", note: "before eating" }, { name: "Medi B", quantity: "1 packet", note: "before eating" }, { name: "Medi B", quantity: "1 packet", note: "before eating" }, { name: "Medi B", quantity: "1 packet", note: "before eating" }]
-let listTaskEvening: MyTask[] = [{ name: "Medi C", quantity: "1 packet", note: "before eating" }, { name: "Medi C", quantity: "1 packet", note: "before eating" }, { name: "Medi C", quantity: "1 packet", note: "before eating" }, { name: "Medi C", quantity: "1 packet", note: "before eating" }]
 export function MorningTask({ list }: { list: MyTask[] }) {
   return (
     <ScrollView >
       {
         list.map((el) => {
           return (
-            <View style={styles.taskContainer} >
+            <View style={styles.taskContainer}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{el.name}</Text>
-                <Text style={{ color: '#A1A8B0' }} >{el.quantity}</Text>
+                <Text style={{ color: '#A1A8B0' }} >{el.amount}</Text>
               </View>
               <Text>Note: {el.note}</Text>
               <View style={styles.btn_container}>
@@ -53,7 +52,7 @@ export function AfternoonTask({ list }: { list: MyTask[] }) {
             <View style={styles.taskContainer} >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{el.name}</Text>
-                <Text style={{ color: '#A1A8B0' }} >{el.quantity}</Text>
+                <Text style={{ color: '#A1A8B0' }} >{el.amount}</Text>
               </View>
               <Text>Note: {el.note}</Text>
               <View style={styles.btn_container}>
@@ -81,7 +80,7 @@ export function EveningTask({ list }: { list: MyTask[] }) {
             <View style={styles.taskContainer} >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{el.name}</Text>
-                <Text style={{ color: '#A1A8B0' }} >{el.quantity}</Text>
+                <Text style={{ color: '#A1A8B0' }} >{el.amount}</Text>
               </View>
               <Text>Note: {el.note}</Text>
               <View style={styles.btn_container}>
@@ -128,6 +127,75 @@ const ExpandableCalendarScreen = (props: Props) => {
     'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
   const [mode, setMode] = useState<string>("morning");
+  const [listTaskMorning, setListTaskMorning] = useState<MyTask[]>([ 
+    {
+        name: "Paracetamol",
+        amount: "1 package",
+        state: "done",
+        id: 1,
+        note:"no"
+    },
+    {
+        name: "Acetaphen",
+        amount: "2 packages",
+        state: "done",
+        id: 2,
+        note:"Do not use when hungry"
+    },
+    {
+        name: "Aspirin",
+        amount: "3 packages",
+        state: "cancel",
+        id: 3,
+        note:"Take it after having breakfast"
+    }
+]);
+  const [listTaskNoon, setListTaskNoon] = useState<MyTask[]>([
+    {
+      name: "Barisvidi",
+      amount: "1 package",
+      state: "done",
+      id: 1,
+      note:"no"
+  },
+  {
+      name: "Becobrol",
+      amount: "2 packages",
+      state: "notYet",
+      id: 2,
+      note:"Do not use when hungry"
+  },
+  {
+      name: "Berberin",
+      amount: "3 packages",
+      state: "cancel",
+      id: 3,
+      note:"If you feel headache please cancel it."
+  }
+  ]);
+  const [listTaskEvening, setListTaskEvening] = useState<MyTask[]>([
+    {
+      name: "Cadisalic",
+      amount: "1 package",
+      state: "done",
+      id: 1,
+      note:"Take it before dinner"
+  }
+  ]);
+  /*
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const responseMorning = await fetch('127.0.0.1:3000/api/v1/reminder/morning');
+        const dataMorning = await responseMorning.json();
+        setListTaskMorning(dataMorning.data);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    }
+    fetchData();
+  })
+  */
   return (
     <View style={styles.container}>
       <View style={{ justifyContent: 'flex-start', width: width - 20 }}>
@@ -197,14 +265,14 @@ const ExpandableCalendarScreen = (props: Props) => {
           <Text style={{ color: mode == "morning" ? "white" : "black" }}>Morning</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "afternoon" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("afternoon")}>
-          <Text style={{ color: mode == "afternoon" ? "white" : "black" }}>Afternoon</Text>
+          <Text style={{ color: mode == "afternoon" ? "white" : "black" }}>Noon</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "everning" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("everning")}>
           <Text style={{ color: mode == "evening" ? "white" : "black" }}>Evening</Text>
         </TouchableOpacity>
       </View>
 
-      {mode == "morning" ? <MorningTask list={listTaskMorning} /> : mode == "afternoon" ? <AfternoonTask list={listTaskAfternoon} /> : <EveningTask list={listTaskEvening} />}
+      {mode == "morning" ? <MorningTask list={listTaskMorning} /> : mode == "afternoon" ? <AfternoonTask list={listTaskNoon} /> : <EveningTask list={listTaskEvening} />}
 
     </View>
   )
