@@ -19,9 +19,9 @@ export function TaskContainer({ time, taskList, color }: { time: string, taskLis
     <View style={styles.each_schedule_container}>
       <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{time}</Text>
       <ScrollView style={{ height: "100%", backgroundColor: `${color}`, marginTop: 10, borderRadius: 20, padding: 10 }}>
-        {taskList.map(el => {
+        {taskList.map((el, index) => {
           return (
-            <Text style={{ color: 'white', fontSize: 16 }}>{el}</Text>
+            <Text style={{ color: 'white', fontSize: 16 }} key={index}>{el}</Text>
           )
         })}
       </ScrollView>

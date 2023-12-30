@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, Dimensions, TouchableOpacity, TouchableWithoutFeedback, } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Dimensions, TouchableOpacity, TouchableWithoutFeedback, Image, } from 'react-native';
 import moment from 'moment';
 import Swiper from 'react-native-swiper';
 import { ScrollView } from 'native-base';
@@ -13,15 +13,14 @@ interface MyTask {
   amount: string,
   note: string,
   state: string,
-  id: Number
 }
-export function MorningTask({ list }: { list: MyTask[] }) {
+export function MorningTask({ list, handleDelete }: { list: MyTask[], handleDelete: (params: { id: number; time: string }) => void }) {
   return (
-    <ScrollView >
+    <ScrollView style={{ marginBottom: 170, marginTop: 10 }} >
       {
-        list.map((el) => {
+        list.map((el, index) => {
           return (
-            <View style={styles.taskContainer}>
+            <View style={styles.taskContainer} key={index}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{el.name}</Text>
                 <Text style={{ color: '#A1A8B0' }} >{el.amount}</Text>
@@ -31,7 +30,7 @@ export function MorningTask({ list }: { list: MyTask[] }) {
                 <TouchableOpacity style={styles.btn_cancel}>
                   <Text style={{ fontWeight: 'bold', color: '#A1A8B0' }}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btn_done}>
+                <TouchableOpacity style={styles.btn_done} onPress={() => handleDelete({ id: index, time: "morning" })}>
                   <Text style={{ fontWeight: 'bold', color: 'white' }}>Done</Text>
                 </TouchableOpacity>
               </View>
@@ -43,13 +42,13 @@ export function MorningTask({ list }: { list: MyTask[] }) {
   )
 }
 
-export function AfternoonTask({ list }: { list: MyTask[] }) {
+export function AfternoonTask({ list, handleDelete }: { list: MyTask[], handleDelete: (params: { id: number; time: string }) => void }) {
   return (
-    <ScrollView >
+    <ScrollView style={{ marginBottom: 170, marginTop: 10 }}>
       {
-        list.map((el) => {
+        list.map((el, index) => {
           return (
-            <View style={styles.taskContainer} >
+            <View style={styles.taskContainer} key={index}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{el.name}</Text>
                 <Text style={{ color: '#A1A8B0' }} >{el.amount}</Text>
@@ -59,7 +58,7 @@ export function AfternoonTask({ list }: { list: MyTask[] }) {
                 <TouchableOpacity style={styles.btn_cancel}>
                   <Text style={{ fontWeight: 'bold', color: '#A1A8B0' }}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btn_done}>
+                <TouchableOpacity style={styles.btn_done} onPress={() => handleDelete({ id: index, time: "noon" })}>
                   <Text style={{ fontWeight: 'bold', color: 'white' }}>Done</Text>
                 </TouchableOpacity>
               </View>
@@ -71,13 +70,13 @@ export function AfternoonTask({ list }: { list: MyTask[] }) {
   )
 }
 
-export function EveningTask({ list }: { list: MyTask[] }) {
+export function EveningTask({ list, handleDelete }: { list: MyTask[], handleDelete: (params: { id: number; time: string }) => void }) {
   return (
-    <ScrollView >
+    <ScrollView style={{ marginBottom: 170, marginTop: 10 }} >
       {
-        list.map((el) => {
+        list.map((el, index) => {
           return (
-            <View style={styles.taskContainer} >
+            <View style={styles.taskContainer} key={index} >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{el.name}</Text>
                 <Text style={{ color: '#A1A8B0' }} >{el.amount}</Text>
@@ -87,7 +86,7 @@ export function EveningTask({ list }: { list: MyTask[] }) {
                 <TouchableOpacity style={styles.btn_cancel}>
                   <Text style={{ fontWeight: 'bold', color: '#A1A8B0' }}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btn_done}>
+                <TouchableOpacity style={styles.btn_done} onPress={() => handleDelete({ id: index, time: "evening" })}>
                   <Text style={{ fontWeight: 'bold', color: 'white' }}>Done</Text>
                 </TouchableOpacity>
               </View>
@@ -98,6 +97,7 @@ export function EveningTask({ list }: { list: MyTask[] }) {
     </ScrollView>
   )
 }
+
 const ExpandableCalendarScreen = (props: Props) => {
   const swiper = useRef();
   const [value, setValue] = useState(new Date());
@@ -117,70 +117,59 @@ const ExpandableCalendarScreen = (props: Props) => {
       });
     });
   }, [week]);
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth();
-  const currentYear = currentDate.getFullYear();
-  const currentHour = currentDate.getHours();
-  const currentMinute = currentDate.getMinutes();
-  const monthNames = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-    'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-  ];
+  const [add, setAdd] = useState<boolean>(false);
+  const [name, setName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [amount, setAmount] = useState<string>('');
   const [mode, setMode] = useState<string>("morning");
-  const [listTaskMorning, setListTaskMorning] = useState<MyTask[]>([ 
+  const [pickMode, setPickMode] = useState<string>("morning");
+  const [listTaskMorning, setListTaskMorning] = useState<MyTask[]>([
     {
-        name: "Paracetamol",
-        amount: "1 package",
-        state: "done",
-        id: 1,
-        note:"no"
+      name: "Paracetamol",
+      amount: "1 package",
+      state: "done",
+      note: "no"
     },
     {
-        name: "Acetaphen",
-        amount: "2 packages",
-        state: "done",
-        id: 2,
-        note:"Do not use when hungry"
+      name: "Acetaphen",
+      amount: "2 packages",
+      state: "done",
+      note: "Do not use when hungry"
     },
     {
-        name: "Aspirin",
-        amount: "3 packages",
-        state: "cancel",
-        id: 3,
-        note:"Take it after having breakfast"
+      name: "Aspirin",
+      amount: "3 packages",
+      state: "cancel",
+      note: "Take it after having breakfast"
     }
-]);
+  ]);
   const [listTaskNoon, setListTaskNoon] = useState<MyTask[]>([
     {
       name: "Barisvidi",
       amount: "1 package",
       state: "done",
-      id: 1,
-      note:"no"
-  },
-  {
+      note: "no"
+    },
+    {
       name: "Becobrol",
       amount: "2 packages",
       state: "notYet",
-      id: 2,
-      note:"Do not use when hungry"
-  },
-  {
+      note: "Do not use when hungry"
+    },
+    {
       name: "Berberin",
       amount: "3 packages",
       state: "cancel",
-      id: 3,
-      note:"If you feel headache please cancel it."
-  }
+      note: "If you feel headache please cancel it."
+    }
   ]);
   const [listTaskEvening, setListTaskEvening] = useState<MyTask[]>([
     {
       name: "Cadisalic",
       amount: "1 package",
       state: "done",
-      id: 1,
-      note:"Take it before dinner"
-  }
+      note: "Take it before dinner"
+    }
   ]);
   /*
   useEffect(() => {
@@ -196,10 +185,39 @@ const ExpandableCalendarScreen = (props: Props) => {
     fetchData();
   })
   */
+  async function handleAddTask({ name, description, amount, pickMode }: { name: string, description: string, amount: string, pickMode: string }) {
+    const newTask = { name: `${name}`, note: `${description}`, amount: `${amount}`, state: "notYet" };
+    if (pickMode === "morning") {
+      setListTaskMorning([...listTaskMorning, newTask]);
+    }
+    else if (pickMode === "noon") {
+      setListTaskNoon([...listTaskNoon, newTask]);
+    }
+    else if (pickMode === "evening") {
+      setListTaskEvening([...listTaskEvening, newTask]);
+    }
+    setAmount(""); setDescription(""); setPickMode("morning"); setName("");
+    setAdd(false);
+
+  }
+  function handleDeleteTask({ id, time }: { id: number, time: string }) {
+    if (time === 'morning') {
+      setListTaskMorning([...listTaskMorning.filter((el, index) => index != id)])
+    }
+    else if (time === 'noon') {
+      setListTaskNoon([...listTaskNoon.filter((el, index) => index != id)])
+    }
+    else if (time === 'evening') {
+      setListTaskEvening([...listTaskEvening.filter((el, index) => index != id)])
+    }
+  }
   return (
     <View style={styles.container}>
-      <View style={{ justifyContent: 'flex-start', width: width - 20 }}>
+      <View style={{ justifyContent: "space-between", width: width - 20, flexDirection: 'row', alignItems: 'center' }}>
         <Text style={{ fontWeight: 'bold', fontSize: 24, paddingLeft: 20 }}>Schedule</Text>
+        <TouchableOpacity onPress={() => setAdd(!add)}>
+          <Image source={add ? require('../img/icon_subtract.png') : require('../img/icon_add.png')} />
+        </TouchableOpacity>
       </View>
       <View style={styles.picker}>
         <Swiper
@@ -260,20 +278,72 @@ const ExpandableCalendarScreen = (props: Props) => {
           ))}
         </Swiper>
       </View>
-      <View style={styles.modeContainer}>
-        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "morning" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("morning")}>
-          <Text style={{ color: mode == "morning" ? "white" : "black" }}>Morning</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "afternoon" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("afternoon")}>
-          <Text style={{ color: mode == "afternoon" ? "white" : "black" }}>Noon</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "everning" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("everning")}>
-          <Text style={{ color: mode == "evening" ? "white" : "black" }}>Evening</Text>
-        </TouchableOpacity>
-      </View>
+      {add ? (
+        <View style={styles.addContainer}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Add reminder</Text>
+          <Text style={{ marginTop: 10 }}>Name of Drug:</Text>
+          <TextInput
+            placeholder="Enter drug name"
+            value={name}
+            onChangeText={setName}
+            style={{ borderBottomWidth: 1, width: width * 80 / 100 }}
+          />
+          <Text style={{ marginTop: 10 }}>Description:</Text>
+          <TextInput
+            placeholder="Enter description"
+            value={description}
+            onChangeText={setDescription}
+            style={{ borderBottomWidth: 1, width: width * 80 / 100 }}
+          />
+          <Text style={{ marginTop: 10 }}>Amount:</Text>
+          <TextInput
+            placeholder="Enter amount"
+            value={amount}
+            onChangeText={setAmount}
+            style={{ borderBottomWidth: 1, width: width * 80 / 100 }}
+          />
+          <Text style={{ marginTop: 10 }}>Time:</Text>
+          <View style={styles.pickModeContainer}>
+            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: pickMode == "morning" ? "#407CE2" : "#bde0fe", width: (width / 29) * 8 - 10, borderRadius: 10 }} onPress={() => setPickMode("morning")}>
+              <Text style={{ color: pickMode == "morning" ? "white" : "black" }}>Morning</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: pickMode == "noon" ? "#407CE2" : "#bde0fe", width: (width / 29) * 8 - 10, borderRadius: 10 }} onPress={() => setPickMode("noon")}>
+              <Text style={{ color: pickMode == "afternoon" ? "white" : "black" }}>Noon</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: pickMode == "evening" ? "#407CE2" : "#bde0fe", width: (width / 29) * 8 - 10, borderRadius: 10 }} onPress={() => setPickMode("evening")}>
+              <Text style={{ color: pickMode == "evening" ? "white" : "black" }}>Evening</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ alignItems: 'center', width: width * 80 / 100, marginTop: 20 }}>
+            <TouchableOpacity style={{ backgroundColor: '#edf2f4', width: "35%", height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 30, borderWidth: 2, borderColor: '#ade8f4' }} onPress={() => handleAddTask({ name, description, amount, pickMode })}>
+              <Text>Add</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      {mode == "morning" ? <MorningTask list={listTaskMorning} /> : mode == "afternoon" ? <AfternoonTask list={listTaskNoon} /> : <EveningTask list={listTaskEvening} />}
 
+      ) : (
+        <View>
+          <View style={styles.modeContainer}>
+            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "morning" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("morning")}>
+              <Text style={{ color: mode == "morning" ? "white" : "black" }}>Morning</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "afternoon" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("afternoon")}>
+              <Text style={{ color: mode == "afternoon" ? "white" : "black" }}>Noon</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: mode == "everning" ? "#407CE2" : "#bde0fe", width: width / 3 - 10, borderRadius: 10 }} onPress={() => setMode("everning")}>
+              <Text style={{ color: mode == "evening" ? "white" : "black" }}>Evening</Text>
+            </TouchableOpacity>
+          </View>
+          {mode == 'morning' ? (
+            <MorningTask list={listTaskMorning} handleDelete={handleDeleteTask} />
+          ) : mode == 'afternoon' ? (
+            <AfternoonTask list={listTaskNoon} handleDelete={handleDeleteTask} />
+          ) : (
+            <EveningTask list={listTaskEvening} handleDelete={handleDeleteTask} />
+          )}
+        </View>
+      )}
     </View>
   )
 }
@@ -359,6 +429,19 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: '#111',
+  },
+  addContainer: {
+    justifyContent: 'flex-start',
+    alignItems: "flex-start",
+    width: width * 80 / 100,
+  },
+  pickModeContainer: {
+    flexDirection: 'row',
+    width: width * 80 / 100,
+    justifyContent: 'space-between',
+    backgroundColor: '#bde0fe',
+    height: 60,
+    borderRadius: 10
   },
 })
 

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import * as FileSystem from 'expo-file-system';
+import { encode, decode } from 'base-64';
 import {
   StyleSheet,
   View,
@@ -16,6 +18,7 @@ import { Text } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Colors } from "@/Theme/Variables";
 import { StatusBar } from "expo-status-bar";
+import { err } from "react-native-svg/lib/typescript/xml";
 
 export interface IScanProps {
   onCaptureSuccess: (file: CameraCapturedPicture) => void;
@@ -28,21 +31,63 @@ export const Scan = (props: IScanProps) => {
   const [camera, setCamera] = useState<Camera | null>();
   const [type, setType] = useState(CameraType.back);
   const navigation = useNavigation();
-  const sendPictureToApi = async (pictureData: CameraCapturedPicture) => {
+
+  const sendPictureToApi = async (image: CameraCapturedPicture) => {
+    const uri = image?.uri || "";
+    const fileUri =
+      Platform.OS === "android" ? uri : uri.replace("file://", "");
+    const uriParts = uri.split(".");
+    const fileType = uriParts[uriParts.length - 1];
+    const formData = new FormData();
+    formData.append("photo", {
+      uri: fileUri,
+      name: `photo.png`,
+      type: `image/png`,
+    } as any);
+    const apiOcr = "https://medifind-ocr.proudsea-d3f4859a.eastasia.azurecontainerapps.io/process_image/";
+    const apiBE = "/"
     try {
-      const response = await fetch('API', {
+      let response = await fetch(`${apiOcr}`, {
         method: 'POST',
+        body: formData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
+          'accept': 'application/json'
         },
-        body: JSON.stringify({
-          pictureData,
-        }),
       });
-      const data = await response.json();
-      console.log('API response:', data);
-    } catch (error) {
-      console.error('Error sending picture to API:', error);
+      if (!response.ok) {
+        console.log("Picture upload fail", response.status);
+      }
+      else {
+        console.log("upload succes");
+      }
+      /*
+      else {
+        try {
+          let responseJson = await response.json();
+          console.log(responseJson);
+          let responseBE = await fetch(`${apiBE}`, {
+            method: 'POST',
+            body: responseJson,
+            headers: {
+              'content-type': 'application/json',
+            },
+          });
+          if (!responseBE.ok) {
+            console.log("Handle nlp fail", responseBE.body);
+          }
+          else {
+            console.log("Success handle nlp", responseBE.body);
+          }
+        }
+        catch (error) {
+          console.log("Error sending data to BE", error);
+        }
+      }
+      */
+    }
+    catch (error) {
+      console.error('Error sending picture to OCRmodel:', error);
     }
   };
   // Use camera
@@ -67,18 +112,18 @@ export const Scan = (props: IScanProps) => {
   }, []);
 
   const handleTakePicture = async () => {
+    console.log("helo")
     if (camera) {
       const result = await camera.takePictureAsync({
         skipProcessing: false,
       });
-      onCaptureSuccess(result);
-      //   sendPictureToApi(result);
+      //onCaptureSuccess(result);
+      sendPictureToApi(result);
     }
+
   };
 
-  if (hasCameraPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
+
 
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -87,8 +132,9 @@ export const Scan = (props: IScanProps) => {
       quality: 1,
     });
     if (!result.canceled) {
-      onCaptureSuccess(result);
-      //   sendPictureToApi(result);
+      // onCaptureSuccess(result);
+      sendPictureToApi(result);
+
     }
   };
 
