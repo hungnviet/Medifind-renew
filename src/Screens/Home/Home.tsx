@@ -1,12 +1,7 @@
 import { i18n, LocalizationKey } from "@/Localization";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, Dimensions, ScrollView, TextInput } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { HStack, Spinner, Heading } from "native-base";
-import { User } from "@/Services";
-import { themeVariables } from "@/Theme";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from '@expo/vector-icons';
+import Checkbox from 'expo-checkbox';
 import { MainScreens } from "..";
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -29,7 +24,7 @@ export function TaskContainer({ time, taskList, color }: { time: string, taskLis
   )
 
 }
-
+interface Task { name: string, amount: string, hour: number, minute: number, state: boolean }
 export const Home = (props: IHomeProps) => {
 
   const { onNavigate } = props;
@@ -45,10 +40,27 @@ export const Home = (props: IHomeProps) => {
       ]
     );
   };
-  let taskMorning: string[] = ["Paracetamol", "Phospholugel"]
-  let taskNoon: string[] = ["Cefpodoxime", "cenerta"];
-  let taskEvening: string[] = ["Cefena", "Cephalaxin"];
-  let time1 = "Morning"
+  const [listTask, setListTask] = useState<Task[]>([
+    { name: "Panadol Extra", amount: "1 pill", hour: 8, minute: 0, state: false },
+    { name: "Panadol Extra", amount: "1 pill", hour: 8, minute: 30, state: false },
+  ])
+  const handleCheckboxChange = (index: number) => {
+    setListTask(prevList => {
+      const newList = [...prevList];
+      newList.splice(index, 1);
+      //newList[index].state = !newList[index].state;
+      newList.sort((a, b) => {
+        if (a.state !== b.state) {
+          return a.state ? 1 : -1; // true comes before false
+        } else if (a.hour !== b.hour) {
+          return a.hour - b.hour; // sort by hour
+        } else {
+          return a.minute - b.minute; // sort by minute if hour is the same
+        }
+      });
+      return newList;
+    });
+  };
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -102,17 +114,35 @@ export const Home = (props: IHomeProps) => {
         </View>
       </View>
       <View style={styles.scheduleContainer}>
-        <View style={styles.schedule_header}>
-          <Text style={{ fontWeight: 'bold' }}>To date schedule</Text>
-          <TouchableOpacity>
-            <Text style={{ color: "#199A8E" }}>See all</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Next medicines for you</Text>
+          <TouchableOpacity onPress={() => onNavigate(MainScreens.SCHEDULE)}>
+            <Text style={{ color: '#407BFF' }}>See all</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal >
-          <TaskContainer key={1} time={time1} taskList={taskMorning} color="#407CE2" />
-          <TaskContainer key={2} time="Afternoon" taskList={taskNoon} color="#E0CF33" />
-          <TaskContainer key={3} time="Evening" taskList={taskEvening} color="#588157" />
-        </ScrollView>
+
+        <View>
+          {
+            listTask.length === 0 ?
+              <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ width: width * (2 / 3) }}>You have taken all the necessary medicine for the day</Text>
+              </View>
+              :
+              listTask.slice(0, 2).map((el, index) => (
+                <View style={[styles.taskContainer, { backgroundColor: el.state ? "#E0E0E0" : "#FFFFFF" }]} key={index}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', columnGap: 10 }}>
+                    <Image source={el.state ? require('./iamges/pillTrue.png') : require('./iamges/pillFalse.png')} style={{ height: 40, width: 40 }} />
+                    <View>
+                      <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{el.name}</Text>
+                      <Text style={{ color: '#A1A8B0' }}>{el.amount}</Text>
+                    </View>
+                  </View>
+                  <Text style={{ color: '#407BFF', fontSize: 16, position: 'absolute', left: width * 2 / 3 - 10 }}>{el.hour}:{el.minute}</Text>
+                  <Checkbox style={{ height: 30, width: 30 }} value={el.state} onValueChange={() => handleCheckboxChange(index)} />
+                </View>
+              ))
+          }
+        </View>
       </View>
     </View>
 
@@ -149,7 +179,7 @@ const styles = StyleSheet.create(
     },
     bannerContainer: {
       flex: 5,
-      backgroundColor: "#5390d9",
+      backgroundColor: "#407BFF",
       width: width - 20,
       flexDirection: "row",
       marginTop: 20,
@@ -163,7 +193,8 @@ const styles = StyleSheet.create(
     textHeader: {
       fontSize: 20,
       width: width / 2,
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      color: "#101623"
     },
     search: {
       borderColor: 'grey',
@@ -214,7 +245,10 @@ const styles = StyleSheet.create(
       height: "80%",
       marginTop: 20,
       marginRight: 20
-    }
+    },
+    taskContainer: {
+      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20, height: 80, borderRadius: 4, paddingLeft: 10, paddingRight: 10
+    },
 
   }
 )

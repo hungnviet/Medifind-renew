@@ -22,6 +22,8 @@ import {
   SafeAreaView,
   TouchableOpacity,
   View,
+  StyleSheet,
+  Dimensions
 } from "react-native";
 import Lottie from "lottie-react-native";
 import { getAntibioticsData } from "./analytics";
@@ -30,7 +32,7 @@ import { MedicineItem } from "@/Components/MedicineItem";
 import Tooltip from "rn-tooltip";
 import { BaseText } from "@/Components/BaseText";
 
-
+const width = Dimensions.get('screen').width;
 interface IScanResultProps {
   image: CameraCapturedPicture;
   data: IScanResult[];
@@ -38,6 +40,51 @@ interface IScanResultProps {
   isLoading: boolean;
   error?: any;
   handlePressToolTip: (item: IMedicine | IDrugBankMedicine) => void;
+}
+interface inforPobs {
+  ten: string,
+  hoatChatChinh: string,
+  SDK: string,
+  SQD: string,
+  xuatSu: string,
+  congTy: string,
+  dangBaoChe: string,
+  diaChiSX: string,
+}
+
+export function InforContainer({ infor }: { infor: inforPobs }) {
+  return (
+    <View style={{
+      backgroundColor: 'white', width: width * 8 / 9, borderRadius: 8, borderColor: '#F1F3F5', marginTop: 10, borderWidth: 2, paddingTop: 12, paddingLeft: 15, paddingRight: 15, shadowOffset: { width: -5, height: 5, },
+      shadowColor: '#171717',
+      shadowOpacity: 0.6,
+      shadowRadius: 3,
+    }}>
+      <View style={{ flexDirection: 'column', justifyContent: 'space-around', width: '100%' }}>
+        <Text style={{ fontSize: 18, textTransform: 'uppercase', fontWeight: 'bold' }}>{infor.ten}</Text>
+        <Text style={{ fontSize: 12 }}>Hoạt chất chính: {infor.hoatChatChinh}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
+        <Text style={{ fontSize: 12 }}>SĐK :{infor.SDK}</Text>
+        <Text style={{ fontSize: 12 }}>SQĐ :{infor.SQD}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
+        <Text style={{ fontSize: 12 }}>Xuất xứ:</Text>
+        <Text style={{ fontSize: 12 }}>{infor.xuatSu}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
+        <Text style={{ fontSize: 12 }}>Công ty:</Text>
+        <Text style={{ fontSize: 12 }}>{infor.congTy}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
+        <Text style={{ fontSize: 12 }}>Dạng bào chế:</Text>
+        <Text style={{ fontSize: 12 }}>{infor.dangBaoChe}</Text>
+      </View>
+      <Text style={{ fontSize: 12 }}>Địa chỉ sản xuất:</Text>
+      <Text style={{ fontSize: 12 }}>{infor.diaChiSX}</Text>
+    </View>
+
+  )
 }
 
 export const ScanResult = (props: IScanResultProps) => {
@@ -77,6 +124,7 @@ export const ScanResult = (props: IScanResultProps) => {
       />
     );
   };
+
 
   const renderAntibioticsAnalytics = () => {
     const result = getAntibioticsData(data);
@@ -233,6 +281,79 @@ export const ScanResult = (props: IScanResultProps) => {
     );
   };
 
+  const information: inforPobs[] = [
+    {
+      ten: "Augmentin 1g tablets",
+      hoatChatChinh: "Amoxicillin; Acid clavulanic",
+      SDK: "VN-5377-10",
+      SQD: "07/QĐ-QLD",
+      xuatSu: "Anh",
+      congTy: "SmithKline Beecham Pharmaceuticals",
+      dangBaoChe: "Viên nén bao phim",
+      diaChiSX: "Clarendon Road, Worthing, West Sussex BN14 8QH",
+    },
+    {
+      ten: "Tavanic",
+      hoatChatChinh: "Levofloxacin hemihydrate",
+      SDK: "VN-10551-10",
+      SQD: "240/QĐ-QLD",
+      xuatSu: "Pháp",
+      congTy: "Sanofi Winthrop Industrie",
+      dangBaoChe: "Viên nén bao phim",
+      diaChiSX: "56, Route de Choisy-au-Bac 60205 Compiègne",
+    },
+    {
+      ten: "New Ameflu Day Time",
+      hoatChatChinh: "Acetaminophen, Guaifenesin, Phenylephrin HCl, Dextromethorphan HBr",
+      SDK: "VD-16568-12",
+      SQD: "99/QĐ-QLD",
+      xuatSu: "Việt Nam",
+      congTy: "Công ty cổ phần Dược phẩm OPV",
+      dangBaoChe: "--",
+      diaChiSX: "Số 27, đường 3A, Khu công nghiệp Biên Hoà 2, Đồng Nai",
+    },
+    {
+      ten: "Vitacap",
+      hoatChatChinh: "Hỗn hợp các Vitamin và khoáng chất",
+      SDK: "VN-15979-12",
+      SQD: "241/QLD-ÐK",
+      xuatSu: "Thái Lan",
+      congTy: "Mega Lifesciences Ltd.",
+      dangBaoChe: "Viên nang mềm",
+      diaChiSX: "384 Soi 6, Pattana 3 Road, Bangpoo Industrial Estate, Samutprakarn 10280",
+    },
+    {
+      ten: "Nexium",
+      hoatChatChinh: "Esomeprazole (dưới dạng Esomeprazole magnesi trihydrate) 10mg",
+      SDK: "VN-17834-14",
+      SQD: "294/QÐ-QLD",
+      xuatSu: "Thụy Điển",
+      congTy: "AstraZeneca AB",
+      dangBaoChe: "Cốm kháng dịch dạ dày để pha hỗn dịch uống",
+      diaChiSX: "SE-151 85 Sodertalje",
+    },
+    {
+      ten: "Pivalone 1%",
+      hoatChatChinh: "Tixocortol pivalate 1% (0,1g/10mL)",
+      SDK: "VN-18042-14",
+      SQD: "294/QÐ-QLD",
+      xuatSu: "Pháp",
+      congTy: "Farmea",
+      dangBaoChe: "Hỗn dịch xịt mũi",
+      diaChiSX: "10 rue Bouche- Thomas-49007 Angers Cedex 01",
+    },
+    {
+      ten: "Zithromax",
+      hoatChatChinh: "Azithromycin ( dưới dạng Azithromycin dihydrat) 250mg",
+      SDK: "VN-18403-14",
+      SQD: "536/QÐ-QLD",
+      xuatSu: "Australia",
+      congTy: "Pfizer (Australia) Pty., Ltd.",
+      dangBaoChe: "Viên nang cứng",
+      diaChiSX: "38-42 Wharf Road West Ryde, NSW 2114",
+    },
+  ];
+
   const renderOverlayResult = (result: IScanResult) => {
     const imageSize = getFullScreenImageSize();
     const boundingBox = result.boundingBox
@@ -297,99 +418,18 @@ export const ScanResult = (props: IScanResultProps) => {
             {"No image found"}
           </Text>
         )}
-        {isLoading ? (
-          <VStack
-            justifyContent={"center"}
-            alignItems={"center"}
-            flex={1}
-            style={{
-              paddingTop: 48,
-            }}
-          >
-            <Lottie
-              style={{
-                width: 128,
-                height: 128,
-              }}
-              autoPlay={true}
-              loop={true}
-              speed={1.5}
-              source={require("../../Assets/Lottie/medicine-online.json")}
-            />
-            <Heading
-              style={{
-                marginVertical: 16,
-              }}
-              color={Colors.PRIMARY}
-              fontSize="sm"
-            >
-              {"Analyzing your image..."}
-            </Heading>
-          </VStack>
-        ) : (
-          <>
-            {renderOverlayResults()}
-            <VStack
-              justifyContent="flex-start"
-              alignItems="stretch"
-              style={{
-                width: "100%",
-                padding: 18,
-                flex: 1,
-              }}
-            >
-              <VStack alignItems="flex-start" justifyContent="flex-start">
-                <Text textAlign="left" bold fontSize={14}>
-                  {`Found ${data.length} results`}
-                </Text>
-              </VStack>
-              <VStack
-                alignItems="stretch"
-                style={{
-                  marginTop: 24,
-                }}
-              >
-                {data.map((result: IScanResult) => {
-                  return (
-                    <>
-                      {renderResultItem({ item: result })}
-                      <View
-                        key={
-                          getMedicineIdentifier(result.medicine.item) + "line"
-                        }
-                        style={{
-                          height: 18,
-                        }}
-                      />
-                    </>
-                  );
-                })}
-                {/* <FlatList
-                    scrollEnabled={true}
-                    renderItem={renderResultItem}
-                    keyExtractor={(item: IScanResult) =>
-                      getMedicineIdentifier(item.medicine.item)
-                    }
-                    style={{
-                      flex: 0,
-                    }}
-                    data={data}
-                    showsVerticalScrollIndicator={false}
-                    ItemSeparatorComponent={() => (
-                      <View
-                        style={{
-                          height: 18,
-                        }}
-                      />
-                    )}
-                    // onRefresh={onRefresh}
-                  /> */}
-              </VStack>
-              {renderAntibioticsAnalytics()}
-            </VStack>
-          </>
-        )}
+        <View style={{ alignItems: 'center' }}>
+          <Text style={{ fontWeight: 'bold', fontSize: 18, marginTop: 10 }}>Result</Text>
+          {
+            information.map((el, index) => <InforContainer infor={el} key={index} />)
+          }
+
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
+
 };
+const styles = StyleSheet.create({
+
+})

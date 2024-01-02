@@ -131,21 +131,19 @@ export const Welcome = (props: IWelcomeProps) => {
         <View style={{ marginBottom: 10 }}>
           {currentSlideIndex == slides.length - 1 ? (
             <View style={{ height: 50, alignItems: 'flex-end', paddingRight: 30 }}>
-              <TouchableOpacity onPress={() => onNavigate(RootScreens.LOGIN)} style={{ width: 50 }}>
-                <LinearGradient
-                  colors={themeVariables.primaryGradientColor}
-                  style={styles.btnStarted}
+              <TouchableOpacity onPress={() => onNavigate(RootScreens.LOGIN)}
+                style={{ backgroundColor: '#407BFF', justifyContent: 'center', alignItems: 'center', borderRadius: 50, width: 60, height: 60 }}>
+
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: themeVariables.fontSize_md,
+                    color: themeVariables.whiteSecondaryColor,
+                  }}
                 >
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: themeVariables.fontSize_md,
-                      color: themeVariables.whiteSecondaryColor,
-                    }}
-                  >
-                    GO
-                  </Text>
-                </LinearGradient>
+                  GO
+                </Text>
+
               </TouchableOpacity>
             </View>
           ) : (
@@ -171,22 +169,19 @@ export const Welcome = (props: IWelcomeProps) => {
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={goToNextSlide}
-
+                style={{ backgroundColor: '#407BFF', justifyContent: 'center', alignItems: 'center', borderRadius: 50, width: 60, height: 60 }}
               >
-                <LinearGradient
-                  colors={themeVariables.primaryGradientColor}
-                  style={styles.btn}
+
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: themeVariables.whiteSecondaryColor,
+                    fontSize: themeVariables.fontSize_md,
+                  }}
                 >
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      color: themeVariables.whiteSecondaryColor,
-                      fontSize: themeVariables.fontSize_md,
-                    }}
-                  >
-                    NEXT
-                  </Text>
-                </LinearGradient>
+                  NEXT
+                </Text>
+
               </TouchableOpacity>
             </View>
           )}
@@ -255,6 +250,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
+    // backgroundColor: '#407BFF'
   },
   btnStarted: {
     height: 65,
@@ -262,5 +258,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: '#407BFF'
   },
 });

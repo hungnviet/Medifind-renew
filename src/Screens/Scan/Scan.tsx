@@ -38,11 +38,12 @@ export const Scan = (props: IScanProps) => {
       Platform.OS === "android" ? uri : uri.replace("file://", "");
     const uriParts = uri.split(".");
     const fileType = uriParts[uriParts.length - 1];
+    const uriPng = fileUri.replace(".jpg", ".png");
     const formData = new FormData();
     formData.append("photo", {
       uri: fileUri,
-      name: `photo.png`,
-      type: `image/png`,
+      file: `photo.jpg`,
+      type: `image/jpeg`,
     } as any);
     const apiOcr = "https://medifind-ocr.proudsea-d3f4859a.eastasia.azurecontainerapps.io/process_image/";
     const apiBE = "/"
@@ -51,8 +52,8 @@ export const Scan = (props: IScanProps) => {
         method: 'POST',
         body: formData,
         headers: {
+          'accept': 'application/json',
           'Content-Type': 'multipart/form-data',
-          'accept': 'application/json'
         },
       });
       if (!response.ok) {
@@ -117,8 +118,8 @@ export const Scan = (props: IScanProps) => {
       const result = await camera.takePictureAsync({
         skipProcessing: false,
       });
-      //onCaptureSuccess(result);
-      sendPictureToApi(result);
+      onCaptureSuccess(result);
+      //sendPictureToApi(result);
     }
 
   };
@@ -132,8 +133,8 @@ export const Scan = (props: IScanProps) => {
       quality: 1,
     });
     if (!result.canceled) {
-      // onCaptureSuccess(result);
-      sendPictureToApi(result);
+      onCaptureSuccess(result);
+      //sendPictureToApi(result);
 
     }
   };

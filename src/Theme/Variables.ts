@@ -85,7 +85,7 @@ export const themeVariables = {
   lightGraySecondaryTextColor: "#bdbdbd",
 
   // primaryGradientColor: ["#3396DF", "#5500CD"],
-  primaryGradientColor: ["#9DCEFF", "#92A3FD"],
+  primaryGradientColor: ["#407BFF", "#407BFF"],
   whiteGradientColor: ["#f3f9fb", "#eaedfc"],
   grayGradientColor: ["#bdbdbd", "#5e5e5e"],
   primaryShadowColor: "#2d3436",
