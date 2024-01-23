@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, Dimensions, ScrollView, TextInput } from "react-native";
 import Checkbox from 'expo-checkbox';
 import { MainScreens } from "..";
+import { useNavigation } from '@react-navigation/native';
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 export interface IHomeProps {
@@ -26,8 +27,9 @@ export function TaskContainer({ time, taskList, color }: { time: string, taskLis
 }
 interface Task { name: string, amount: string, hour: number, minute: number, state: boolean }
 export const Home = (props: IHomeProps) => {
-
+  const navigation = useNavigation();
   const { onNavigate } = props;
+  const [searchInput, setSearchInput] = useState<string>(''); // search input
   const createAlert = () => {
     Alert.alert(
       'Updating...',
@@ -65,15 +67,18 @@ export const Home = (props: IHomeProps) => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View>
-          <Text style={styles.textHeader}>Find your desire health solution</Text>
+          <Text style={styles.textHeader}>MEDIFIND</Text>
         </View>
         <View>
           <Image source={require('./iamges/notice_icon2.png')} />
         </View>
       </View>
       <View style={styles.searchContainer}>
-        <TextInput placeholder="Search drugs,articles,..." style={styles.search}></TextInput>
-        <Image source={require('./iamges/find.png')} style={styles.find_icon} />
+        <TextInput placeholder="Search drugs,articles,..." style={styles.search} onChangeText={text => setSearchInput(text)} // Add this line
+          value={searchInput} ></TextInput>
+        <TouchableOpacity style={styles.btnFind} onPress={() => onNavigate(MainScreens.SEARCH)}>
+          <Text style={{ fontWeight: 'bold' }}>Find</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.functionContainer}>
         <View style={styles.eachFunctionContainer}>
@@ -105,8 +110,8 @@ export const Home = (props: IHomeProps) => {
       <View style={styles.bannerContainer}>
         <View style={styles.banner_content}>
           <Text style={{ color: "#E8F3F1", fontWeight: '600', fontSize: 16, width: width / 2 }}>Early protection for your family health</Text>
-          <TouchableOpacity style={{ backgroundColor: "#11399F", width: 130, alignItems: 'center', height: 40, justifyContent: 'center', borderRadius: 20 }}>
-            <Text style={{ color: "white", fontWeight: 'bold' }}>Learn more</Text>
+          <TouchableOpacity style={{ backgroundColor: "#FFFFFF", width: 130, alignItems: 'center', height: 40, justifyContent: 'center', borderRadius: 20 }}>
+            <Text style={{ color: "#407BFF", fontWeight: 'bold' }}>Learn more</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.banner_img}>
@@ -162,7 +167,7 @@ const styles = StyleSheet.create(
       width: width - 20,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
     },
     searchContainer: {
       flex: 2,
@@ -191,7 +196,7 @@ const styles = StyleSheet.create(
       width: width - 20,
     },
     textHeader: {
-      fontSize: 20,
+      fontSize: 28,
       width: width / 2,
       fontWeight: 'bold',
       color: "#101623"
@@ -202,11 +207,11 @@ const styles = StyleSheet.create(
       width: 9 * (width / 10),
       height: 50,
       borderRadius: 30,
-      paddingLeft: 40
+      paddingLeft: 10
     },
-    find_icon: {
+    btnFind: {
       position: 'absolute',
-      left: 20
+      right: 30,
     },
     eachFunctionContainer: {
       justifyContent: 'center',

@@ -1,5 +1,5 @@
 import { i18n, LocalizationKey } from "@/Localization";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Dimensions, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { HStack, Spinner, Heading, Toast } from "native-base";
@@ -8,9 +8,15 @@ import { themeVariables } from "@/Theme";
 import { LinearGradient } from "expo-linear-gradient";
 import { MainScreens } from "..";
 import { unescape, upperCase } from "lodash";
+// import { RouteProp } from '@react-navigation/native';
+// type SearchStackParamList = {
+//   SearchScreen: { query?: string };
+//   // ... other screens ...
+// };
 
 export interface ISearchProps {
-  onNavigate: (string: MainScreens) => void;
+  onNavigate: (screen: MainScreens) => void;
+  // route: RouteProp<SearchStackParamList, 'SearchScreen'>;
 }
 
 const width = Dimensions.get('screen').width;
@@ -59,53 +65,12 @@ export function InforContainer({ infor }: { infor: inforPobs }) {
 
   )
 }
-const informationArray: inforPobs[] = [
-  {
-    ten: "Panadol cảm cúm",
-    hoatChatChinh: "Mỗi viên chứa: Paracetamol 500mg; Cafein 25mg; Phenylephrine HCl 5mg",
-    SDK: "VD-16582-12",
-    SQD: "99/QĐ-QLD",
-    xuatSu: "Việt Nam",
-    congTy: "Công ty Cổ phần Dược phẩm Sanofi-Synthelabo Việt Nam",
-    dangBaoChe: "Hộp 10 vỉ x 10 viên nén bao phim",
-    diaChiSX: "15/6C Đặng Văn Bi-Thủ Đức-Tp Hồ Chí Minh",
-  },
-  {
-    ten: "Panadol extra",
-    hoatChatChinh: "Paracetamol 500mg; Caffein 65mg",
-    SDK: "VD-21189-14",
-    SQD: "296/QÐ-QLD",
-    xuatSu: "Việt Nam",
-    congTy: "Công ty Cổ phần Dược phẩm Sanofi-Synthelabo Việt Nam",
-    dangBaoChe: "Hộp 15 vỉ x 12 viên",
-    diaChiSX: "15/6C Đặng Văn Bi-Thủ Đức-Tp Hồ Chí Minh",
-  },
-  {
-    ten: "Panadol",
-    hoatChatChinh: "Paracetamol 500mg",
-    SDK: "VD-29584-18",
-    SQD: "99/QÐ-QLD",
-    xuatSu: "Việt Nam",
-    congTy: "Công ty Cổ phần Dược phẩm Sanofi-Synthelabo Việt Nam",
-    dangBaoChe: "Hộp 10 vỉ x 12 viên",
-    diaChiSX: "15/6C Đặng Văn Bi-Thủ Đức-Tp Hồ Chí Minh",
-  },
-  {
-    ten: "Panadol",
-    hoatChatChinh: "Paracetamol",
-    SDK: "VN-12465-11",
-    SQD: "127/QĐ-QLD",
-    xuatSu: "Malaysia",
-    congTy: "Sterling Drug (M) Sdn. Bhd.",
-    dangBaoChe: "Hộp 10 vỉ x 10 viên",
-    diaChiSX: "Lot 89, Jalan Enggang, Ampang-Ulu Kelang Industrial Estate, 54200 Selangor",
-  },
-];
-
 
 export const Search = (props: ISearchProps) => {
   const { onNavigate } = props;
+  // const { route } = props;
   const [success, setSuccess] = useState(false);
+  // const query = route.params?.query;
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchResult, setSearchResult] = useState<inforPobs[]>([]);
@@ -121,7 +86,7 @@ export const Search = (props: ISearchProps) => {
         setLoading(false);
         setSuccess(true);
         setRes(searchText);
-        setSearchText("");
+        setSearchHistory([searchText, ...searchHistory]);
         if (data.status === "success") {
           setSearchResult(data.data.result);
         } else {
@@ -149,8 +114,8 @@ export const Search = (props: ISearchProps) => {
     <View style={styles.container}>
       <Text style={{ fontWeight: 'bold', fontSize: 24 }} >Search</Text>
       <View style={styles.searchContainer} >
-        <Image source={require('./images/Search.png')} style={styles.iconSearch}></Image>
-        <TextInput placeholder="Search medicines" value={searchText} onChangeText={setSearchText} style={styles.textInput}></TextInput>
+        <Image source={success ? require('./images/SearchSucces.png') : require('./images/Search.png')} style={styles.iconSearch}></Image>
+        <TextInput placeholder="Search medicines" value={searchText} onChangeText={setSearchText} style={success ? styles.textInputSucces : styles.textInput}></TextInput>
         <TouchableOpacity style={styles.btnSearch} onPress={handleSearch}>
           <Text>GO</Text>
         </TouchableOpacity>
@@ -172,7 +137,13 @@ export const Search = (props: ISearchProps) => {
       {
         success === true && (
           <View style={styles.historyContainer}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 20 }}>{res}</Text>
+            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+              <View ><Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 20 }}>{res}</Text></View>
+              <TouchableOpacity onPress={handleAgain} >
+                <Text style={{ color: '#ADADAD', fontWeight: 'bold' }}>Search again</Text>
+              </TouchableOpacity>
+            </View>
+
             <ScrollView style={{ marginBottom: 200 }}>
               {
                 searchResult.map((el, index) => <InforContainer infor={el} key={index} />)
@@ -211,6 +182,13 @@ const styles = StyleSheet.create({
   },
   textInput: {
     backgroundColor: '#ADADAD',
+    width: width * 75 / 100,
+    height: 60,
+    borderRadius: 10,
+    paddingLeft: 55
+  },
+  textInputSucces: {
+    backgroundColor: '#F5F5F5',
     width: width * 75 / 100,
     height: 60,
     borderRadius: 10,
