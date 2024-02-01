@@ -11,6 +11,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { View, Text } from "native-base";
 import { StyleSheet } from "react-native";
 export type MainBottomBarParamList = {
+  // pass params between the screens
+  // Example 
+  // [MainScreens.SEARCH]: { text: string };
   [MainScreens.HOME]: undefined;
   [MainScreens.CHAT]: undefined;
   [MainScreens.SCAN]: undefined;

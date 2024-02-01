@@ -9,7 +9,10 @@ type SearchScreenNavigatorProps = NativeStackScreenProps<
   MainScreens.SEARCH
 >;
 
-export const SearchContainer = ({ navigation }: SearchScreenNavigatorProps) => {
+export const SearchContainer = ({ navigation, route }: SearchScreenNavigatorProps) => {
+  // get params passed into this screen
+  // Example
+  // const [text, setText] = useState(route.params.text);
   const onNavigate = (screen: MainScreens) => {
     navigation.navigate(screen);
   };
