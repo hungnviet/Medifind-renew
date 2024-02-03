@@ -14,12 +14,12 @@ export type MainBottomBarParamList = {
   // pass params between the screens
   // Example 
   // [MainScreens.SEARCH]: { text: string };
-  [MainScreens.HOME]: undefined;
+  [MainScreens.HOME]: { userID: string | undefined };
   [MainScreens.CHAT]: undefined;
-  [MainScreens.SCAN]: undefined;
-  [MainScreens.SEARCH]: undefined;
-  [MainScreens.SCHEDULE]: undefined;
-  [MainScreens.HISTORY]: undefined;
+  [MainScreens.SCAN]: { userID: string | undefined };
+  [MainScreens.SEARCH]: { userID: string | undefined, searchText: string | undefined };
+  [MainScreens.SCHEDULE]: { userID: string | undefined };
+  [MainScreens.HISTORY]: { userID: string | undefined };
 };
 
 const Tab = createBottomTabNavigator<MainBottomBarParamList>();

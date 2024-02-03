@@ -3,8 +3,7 @@ import { RootScreens } from "..";
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 import { useState } from "react"
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from "firebase/auth";
+
 
 export interface LogInProps {
     onNavigate: (screen: RootScreens) => void;
@@ -12,70 +11,131 @@ export interface LogInProps {
 
 export const Login = (props: LogInProps) => {
     const { onNavigate } = props;
-    const [inputPhoneNumber, setInputPhoneNumber] = useState<string>("")
-    const [inputPassWord, setInputPassWord] = useState<string>("")
-    const onLogInSuccess = () => {
-        onNavigate(RootScreens.MAIN);
-    };
-    const handleLogIn = async (inputEmail: string, inputPassword: string, onLogInSuccess: () => void): Promise<void> => {
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, inputEmail, inputPassword);
-            const user = userCredential.user;
-            console.log('Registered with:', user?.email);
-            onLogInSuccess();
-        } catch (error: any) {
-            console.log(error.message);
-            if (error.message === "Firebase: Error (auth/missing-password).") {
-                alert("Please input the password!")
-            }
-            else {
-                alert("Email or password is incorrect. Please try again.")
-            }
+    const [focusEmail, setFocusEmail] = useState(false)
+    const [focusPassword, setFocusPassword] = useState(false)
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [sercuePassword, setSercuePassword] = useState(true)
+    function onFocusEmail() {
+        setFocusEmail(true)
+        if (password === '') {
+            setFocusPassword(false)
         }
+    }
+    function onFocusPassword() {
+        setFocusPassword(true)
+        if (email === '') {
+            setFocusEmail(false)
+        }
+    }
+    const apiSigin = "/.../api/v1/signin";
+    function onLogin() {
+        fetch(apiSigin, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 200) {
+                    onNavigate(RootScreens.MAIN)
+                } else {
+                    alert(data.message)
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
     return (
         <View style={styles.container}>
             <View style={styles.logo_container}>
-                <Image source={require('./iamges/Logo_red.png')} />
+                <Image style={styles.logo} source={require('./iamges/Logo_red.png')} />
             </View>
             <View style={styles.title_container}>
-                <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Log in</Text>
-                <Text style={{ textAlign: 'center' }}>For Log in, please enter your phone number and password</Text>
+                <Text style={styles.wellcome}>
+                    Wellcome Back 👋
+                </Text>
+                <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
+                    <Text style={styles.wellcome}>to</Text>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: "#407BFF" }}>MEDIFIND</Text>
+                </View>
+                <Text style={styles.hello}>Hello there, login to continue</Text>
             </View>
             <View style={styles.form_container}>
-                <TextInput placeholder='Your phone number' style={styles.input} value={inputPhoneNumber} onChangeText={newText => setInputPhoneNumber(newText)}></TextInput>
-                <TextInput placeholder='Your password' style={styles.input} value={inputPassWord} onChangeText={newText => setInputPassWord(newText)} secureTextEntry></TextInput>
-                <TouchableOpacity style={styles.btn} onPress={() => handleLogIn(inputPhoneNumber, inputPassWord, onLogInSuccess)}>
-                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>Log in</Text>
+                <View style={focusEmail ? styles.input_container_focus : styles.input_container}>
+                    {focusEmail && <Text >
+                        Email
+                    </Text>}
+                    <View>
+                        <TextInput placeholder="Email address" onFocus={onFocusEmail} value={email} onChangeText={(text) => setEmail(text)}>
+                        </TextInput>
+                    </View>
+
+                </View>
+                <View style={focusPassword ? styles.input_container_focus : styles.input_container}>
+                    {focusPassword && <Text >
+                        Password
+                    </Text>}
+                    <View>
+                        <TextInput placeholder="Password" onFocus={onFocusPassword} value={password} onChangeText={(text) => setPassword(text)} secureTextEntry={sercuePassword}>
+                        </TextInput>
+                        <TouchableOpacity onPress={() => setSercuePassword(!sercuePassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
+                            <Image source={require('./iamges/hideIcon.png')} style={{ width: 20, height: 20 }} />
+                        </TouchableOpacity>
+                    </View>
+
+                </View>
+                <TouchableOpacity style={{ width: width * 90 / 100, alignItems: 'flex-end', marginTop: 10 }}>
+                    <Text style={{ color: "#407BFF" }}>
+                        Forgot password?
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.login_btn}>
+                    <Text style={{ color: "white" }}>
+                        Login
+                    </Text>
                 </TouchableOpacity>
             </View>
-            <View style={styles.other_option}>
-                <TouchableOpacity style={styles.btn_option} onPress={() => onNavigate(RootScreens.MAIN)}>
-                    <View style={styles.icon_container}>
-                        <Image source={require('./iamges/avatar.jpg')} style={styles.icon} />
-                    </View>
-
-                    <Text style={{ fontWeight: 'bold' }}>Log in as a guest</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btn_option} onPress={() => alert('updating..')}>
-                    <View style={styles.icon_container}>
-                        <Image source={require('./iamges/Google_icon.jpg')} style={styles.icon} />
-                    </View>
-
-                    <Text style={{ fontWeight: 'bold' }}>Login with Google</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btn_option} onPress={() => alert('updating..',)}>
-                    <View style={styles.icon_container}>
-                        <Image source={require('./iamges/Facebook_icon.png')} style={styles.icon} />
-                    </View>
-                    <Text style={{ fontWeight: 'bold' }}>Login with Facebook</Text>
-                </TouchableOpacity>
+            <View style={styles.other_option_container}>
+                <Text style={{ color: "#A1A8B0" }}>
+                    Or continue with social account
+                </Text>
+                <View style={styles.other_options}>
+                    <TouchableOpacity style={styles.option_container}>
+                        <View>
+                            <Image source={require('./iamges/Google_icon.jpg')} style={styles.option_icon} />
+                        </View>
+                        <Text>
+                            Google
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.option_container}>
+                        <View>
+                            <Image source={require('./iamges/Facebook_icon.png')} style={styles.option_icon} />
+                        </View>
+                        <Text>
+                            Facebook
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             <View style={styles.footer}>
-                <Text style={{ color: '#B4BAC9', fontSize: 16 }}>Don't have an acount?</Text>
-                <TouchableOpacity onPress={() => onNavigate(RootScreens.SIGNUP)}>
-                    <Text style={{ fontSize: 16, fontWeight: '500', textDecorationLine: 'underline' }}>Sign up</Text>
-                </TouchableOpacity>
+                <View style={styles.register_container}>
+                    <Text>
+                        Don't have an account?
+                    </Text>
+                    <TouchableOpacity onPress={() => onNavigate(RootScreens.SIGNUP)}>
+                        <Text style={{ color: "#407BFF" }}>
+                            Register
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     )
@@ -86,89 +146,103 @@ const styles = StyleSheet.create(
     {
         container: {
             flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#fff'
+            paddingTop: 50,
+            backgroundColor: '#ffffff',
+            paddingLeft: width * 5 / 100,
         },
         logo_container: {
-            width: width,
-            flex: 2,
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: 30
+            marginTop: 50
+        },
+        logo: {
+            height: 80,
+            width: 80
         },
         title_container: {
-            width: width,
-            flex: 4,
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingLeft: 20,
-            paddingRight: 20,
-            rowGap: 20
+        },
+        wellcome: {
+            fontSize: 24,
+            fontWeight: 'bold'
+        },
+        hello: {
+            fontSize: 14,
+            color: '#ADADAD'
         },
         form_container: {
-            width: width,
-            flex: 5,
-            justifyContent: 'center',
-            alignItems: 'center',
-            rowGap: 20
+            marginTop: 50
         },
-        other_option: {
-            width: width - 40,
-            flex: 5,
+        input_container: {
+            height: 50,
+            width: width * 90 / 100,
+            borderColor: '#ADADAD',
+            borderBottomWidth: 1,
             justifyContent: 'center',
-            alignItems: 'center',
+            marginTop: 20,
+            paddingLeft: 10,
+            rowGap: 10
+        },
+        input_container_focus: {
+            height: 70,
+            width: width * 90 / 100,
+            borderRadius: 6,
+            justifyContent: 'center',
+            marginTop: 20,
+            paddingLeft: 10,
             rowGap: 10,
-            borderTopWidth: 2,
-            borderColor: 'black'
-
-
-
+            backgroundColor: '#fff', // Add this line
+            shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
         },
-        footer: {
-            width: width,
-            flex: 2,
+        login_btn: {
+            width: width * 90 / 100,
+            height: 60,
+            backgroundColor: "#407BFF",
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 20
+        },
+        other_option_container: {
+            marginTop: 20,
+            width: width * 90 / 100,
+            alignItems: 'center'
+        },
+        other_options: {
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            width: width * 90 / 100,
+            marginTop: 20
+        },
+        option_container: {
+            flexDirection: 'row',
+            columnGap: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: '#A1A8B0',
+            borderRadius: 6,
+            height: 50,
+            width: width * 40 / 100,
+        },
+        option_icon: {
+            width: 40,
+            height: 40
+        },
+        register_container: {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            columnGap: 20
+            columnGap: 5,
+
         },
-        input: {
-            borderColor: 'grey',
-            borderWidth: 2,
-            width: width - 50,
-            height: 50,
-            borderRadius: 20,
-            paddingLeft: 10
-        },
-        btn: {
-            backgroundColor: '#407CE2',
-            width: width / 2,
-            height: 50,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 20
-        },
-        btn_option: {
-            backgroundColor: '#F1F3F5',
-            width: width - 50,
-            borderRadius: 40,
-            height: 60,
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'relative',
-            padding: 0
-        },
-        icon_container: {
-            width: 50,
-            height: 50,
+        footer: {
             position: 'absolute',
-            left: 20,
-        },
-        icon: {
-            width: '100%',
-            height: '100%',
-            borderRadius: 20
+            bottom: 30,
+            width: width
         }
     }
 )

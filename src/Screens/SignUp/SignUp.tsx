@@ -5,87 +5,149 @@ const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 import { auth } from '../firebase';
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { set } from 'lodash';
 export interface SignUpProps {
     onNavigate: (screen: RootScreens) => void;
 }
 export const SignUp = (props: SignUpProps) => {
     const { onNavigate } = props;
-    const [inputEmail, setInputEmail] = useState<string>("");
-    const [inputPassword, setInputPassword] = useState<string>("");
-    const [inputConfirm, setInputConfirm] = useState<string>("");
-    const term: String = " điền khoản gì minhf them vo sau ";
-    const policy: String = "chính sách bảo mật:....";
-    const onSignUpSuccess = () => {
-        onNavigate(RootScreens.LOGIN);
-    };
-    const handleSignUp = async (inputEmail: string, inputPassword: string, onSignUpSuccess: () => void): Promise<void> => {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, inputEmail, inputPassword);
-            const user = userCredential.user;
-            console.log('Registered with:', user?.email);
-            onSignUpSuccess();
-        } catch (error: any) {
-            if (error.message === "Firebase: Error (auth/email-already-in-use).") {
-                alert("Email has been used.");
-            }
-        }
+    const [focusName, setFocusName] = useState(false)
+    const [focusEmail, setFocusEmail] = useState(false)
+    const [focusPassword, setFocusPassword] = useState(false)
+    const [focusConfirmPassword, setFocusConfirmPassword] = useState(false)
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [name, setName] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [sercuePassword, setSercuePassword] = useState(true)
+    const [sercueConfirmPassword, setSercueConfirmPassword] = useState(true)
+    function onFocusName() {
+        setFocusName(true)
+    }
+    function onFocusEmail() {
+        setFocusEmail(true)
+    }
+    function onFocusPassword() {
+        setFocusPassword(true)
+    }
+    function onFocusConfirmPassword() {
+        setFocusConfirmPassword(true)
+    }
+    function onBlurName() {
+        setFocusName(false)
+    }
+    function onBlurEmail() {
+        setFocusEmail(false)
+    }
+    function onBlurPassword() {
+        setFocusPassword(false)
+    }
+    function onBlurConfirmPassword() {
+        setFocusConfirmPassword(false)
     }
     return (
         <View style={styles.container}>
             <View style={styles.logo_container}>
-                <Image source={require('./iamges/Logo_red.png')} />
+                <Image style={styles.logo} source={require('./iamges/Logo_red.png')} />
             </View>
             <View style={styles.title_container}>
-                <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Registration</Text>
+                <Text style={styles.wellcome}>
+                    Register Account
+                </Text>
+                <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
+                    <Text style={styles.wellcome}>to</Text>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: "#407BFF" }}>MEDIFIND</Text>
+                </View>
+                <Text style={styles.hello}>Hello there, register to continue</Text>
             </View>
             <View style={styles.form_container}>
-                <View style={{ rowGap: 10 }}>
-                    <TextInput placeholder='Your Email' style={styles.input} value={inputEmail} onChangeText={newText => setInputEmail(newText)}></TextInput>
-                    <TextInput placeholder='Password' style={styles.input} value={inputPassword} onChangeText={newText => setInputPassword(newText)} secureTextEntry></TextInput>
-                    <TextInput placeholder='Confirm your password again' style={styles.input} value={inputConfirm} onChangeText={newText => setInputConfirm(newText)} secureTextEntry></TextInput>
+                <View style={focusName ? styles.input_container_focus : styles.input_container}>
+                    {focusName && <Text >
+                        Name
+                    </Text>}
+                    <View>
+                        <TextInput placeholder="Your name" onFocus={onFocusName} onBlur={onBlurName} value={name} onChangeText={(text) => setName(text)}>
+                        </TextInput>
+                    </View>
+
                 </View>
-                <View style={{ flexDirection: 'row' }}>
-                    <Text style={{ fontSize: 16, fontWeight: '500', }}>
-                        Read the
-                    </Text>
-                    <TouchableOpacity onPress={() => alert(`${term}`)}><Text style={{ fontSize: 16, fontWeight: '500', textDecorationLine: 'underline' }}>Terms </Text></TouchableOpacity>
-                    <Text style={{ fontSize: 16, fontWeight: '500', }}>and </Text>
-                    <TouchableOpacity onPress={() => alert(`${policy}`)}><Text style={{ fontSize: 16, fontWeight: '500', textDecorationLine: 'underline' }}>Privacy policy</Text></TouchableOpacity>
+                <View style={focusEmail ? styles.input_container_focus : styles.input_container}>
+                    {focusEmail && <Text >
+                        Email
+                    </Text>}
+                    <View>
+                        <TextInput placeholder="Email address" onFocus={onFocusEmail} onBlur={onBlurEmail} value={email} onChangeText={(text) => setEmail(text)}>
+                        </TextInput>
+                    </View>
+
+                </View>
+                <View style={focusPassword ? styles.input_container_focus : styles.input_container}>
+                    {focusPassword && <Text >
+                        Password
+                    </Text>}
+                    <View>
+                        <TextInput placeholder="Password" onFocus={onFocusPassword} onBlur={onBlurPassword} value={password} onChangeText={(text) => setPassword(text)} secureTextEntry={sercuePassword}>
+                        </TextInput>
+                        <TouchableOpacity onPress={() => setSercuePassword(!sercuePassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
+                            <Image source={require('./iamges/hideIcon.png')} style={{ width: 20, height: 20 }} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={focusConfirmPassword ? styles.input_container_focus : styles.input_container}>
+                    {focusConfirmPassword && <Text >
+                        Confirm Password
+                    </Text>}
+                    <View>
+                        <TextInput placeholder="Confirm Password" onFocus={onFocusConfirmPassword} onBlur={onBlurConfirmPassword} value={confirmPassword} onChangeText={(text) => setConfirmPassword(text)} secureTextEntry={sercueConfirmPassword}>
+                        </TextInput>
+                        <TouchableOpacity onPress={() => setSercueConfirmPassword(!sercueConfirmPassword)} style={{ position: 'absolute', right: 10, top: 10 }}>
+                            <Image source={require('./iamges/hideIcon.png')} style={{ width: 20, height: 20 }} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
-                <TouchableOpacity style={styles.btn} onPress={() => handleSignUp(inputEmail, inputPassword, onSignUpSuccess)}>
-                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>Continue</Text>
-                </TouchableOpacity>
             </View>
-            <View style={styles.other_option}>
-                <TouchableOpacity style={styles.btn_option} onPress={() => alert('updating..')}>
-                    <View style={styles.icon_container}>
-                        <Image source={require('./iamges/Apple_icon.png')} style={styles.icon} />
-                    </View>
-
-                    <Text style={{ fontWeight: 'bold' }}>Sign up with Apple ID</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btn_option} onPress={() => alert('updating..')}>
-                    <View style={styles.icon_container}>
-                        <Image source={require('./iamges/Google_icon.jpg')} style={styles.icon} />
-                    </View>
-
-                    <Text style={{ fontWeight: 'bold' }}>Sign up with Google</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btn_option} onPress={() => alert('updating..')}>
-                    <View style={styles.icon_container}>
-                        <Image source={require('./iamges/Facebook_icon.png')} style={styles.icon} />
-                    </View>
-                    <Text style={{ fontWeight: 'bold' }}>Sign up with Facebook</Text>
-                </TouchableOpacity>
+            <TouchableOpacity style={styles.login_btn}>
+                <Text style={{ color: "white" }}>
+                    Register
+                </Text>
+            </TouchableOpacity>
+            <View style={styles.other_option_container}>
+                <Text style={{ color: "#A1A8B0" }}>
+                    Or continue with social account
+                </Text>
+                <View style={styles.other_options}>
+                    <TouchableOpacity style={styles.option_container}>
+                        <View>
+                            <Image source={require('./iamges/Google_icon.jpg')} style={styles.option_icon} />
+                        </View>
+                        <Text>
+                            Google
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.option_container}>
+                        <View>
+                            <Image source={require('./iamges/Facebook_icon.png')} style={styles.option_icon} />
+                        </View>
+                        <Text>
+                            Facebook
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             <View style={styles.footer}>
-                <Text style={{ color: '#B4BAC9', fontSize: 16 }}>Already have an acount?</Text>
-                <TouchableOpacity onPress={() => onNavigate(RootScreens.LOGIN)}>
-                    <Text style={{ fontSize: 16, fontWeight: '500', textDecorationLine: 'underline' }}>Log in </Text>
-                </TouchableOpacity>
+                <View style={styles.register_container}>
+                    <Text>
+                        Already have an account?
+                    </Text>
+                    <TouchableOpacity onPress={() => onNavigate(RootScreens.LOGIN)}>
+                        <Text style={{ color: "#407BFF" }}>
+                            Log in
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View >
+        </View>
     )
 }
 
@@ -94,87 +156,103 @@ const styles = StyleSheet.create(
     {
         container: {
             flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#fff'
+            paddingTop: 20,
+            backgroundColor: '#ffffff',
+            paddingLeft: width * 5 / 100,
         },
         logo_container: {
-            width: width,
-            flex: 2,
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: 30
+            marginTop: 20
+        },
+        logo: {
+            height: 80,
+            width: 80
         },
         title_container: {
-            width: width,
-            flex: 2,
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingLeft: 20,
-            paddingRight: 20,
-            rowGap: 20
+        },
+        wellcome: {
+            fontSize: 24,
+            fontWeight: 'bold'
+        },
+        hello: {
+            fontSize: 14,
+            color: '#ADADAD'
         },
         form_container: {
-            marginTop: 10,
-            width: width,
-            flex: 6,
+            marginTop: 50
+        },
+        input_container: {
+            height: 50,
+            width: width * 90 / 100,
+            borderColor: '#ADADAD',
+            borderBottomWidth: 1,
+            justifyContent: 'center',
+            marginTop: 20,
+            paddingLeft: 10,
+            rowGap: 10
+        },
+        input_container_focus: {
+            height: 70,
+            width: width * 90 / 100,
+            borderRadius: 6,
+            justifyContent: 'center',
+            marginTop: 20,
+            paddingLeft: 10,
+            rowGap: 10,
+            backgroundColor: '#fff', // Add this line
+            shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+        },
+        login_btn: {
+            width: width * 90 / 100,
+            height: 60,
+            backgroundColor: "#407BFF",
             justifyContent: 'center',
             alignItems: 'center',
-            rowGap: 10,
+            marginTop: 20
         },
-        other_option: {
-            width: width - 40,
-            flex: 4,
+        other_option_container: {
+            marginTop: 20,
+            width: width * 90 / 100,
+            alignItems: 'center'
+        },
+        other_options: {
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            width: width * 90 / 100,
+            marginTop: 20
+        },
+        option_container: {
+            flexDirection: 'row',
+            columnGap: 10,
             justifyContent: 'center',
             alignItems: 'center',
-            rowGap: 10,
-            borderTopWidth: 2,
-            borderColor: 'black'
+            borderWidth: 1,
+            borderColor: '#A1A8B0',
+            borderRadius: 6,
+            height: 50,
+            width: width * 40 / 100,
         },
-        footer: {
-            width: width,
-            flex: 1,
+        option_icon: {
+            width: 40,
+            height: 40
+        },
+        register_container: {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            columnGap: 20
+            columnGap: 5,
+
         },
-        input: {
-            borderColor: 'grey',
-            borderWidth: 2,
-            width: width - 50,
-            height: 60,
-            borderRadius: 20,
-            paddingLeft: 20
-        },
-        btn: {
-            backgroundColor: '#407CE2',
-            width: width / 2,
-            height: 50,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 20
-        },
-        btn_option: {
-            backgroundColor: '#F1F3F5',
-            width: width - 50,
-            borderRadius: 40,
-            height: 60,
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'relative',
-            padding: 0
-        },
-        icon_container: {
-            width: 50,
-            height: 50,
+        footer: {
             position: 'absolute',
-            left: 20,
-        },
-        icon: {
-            width: '100%',
-            height: '100%',
-            borderRadius: 20
+            bottom: 30,
+            width: width
         }
     }
 )

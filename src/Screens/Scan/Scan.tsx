@@ -76,39 +76,9 @@ export const Scan = (props: IScanProps) => {
   const [information, setInformation] = useState<inforPobs[]>([])
 
   const sendPictureToApi = async (uri: string) => {
-    // const apiBE = "192.168.1.12:3000/api/v1/nlp"
+    const apiBE = "https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/nlp"
     await setLoading(true);
-    // const recognizedText = "STT Tén thude/ham lugng DVT 1 | Penicilin(duéi dang Phenoxymethylpenicilin Kali) Vin 400.000 UI (Pe iin (duéi dang Phenoxy methyl penicilin kali) Uédng , Sdng 2 Vien, Tria 2 Vien , Chiéu 2 Vien - 2 | Paracetamol (acetaminophen) 500mg (Mypara Vién 500) Uéng , Sang 1 Vién , Chiéu 1 Vien - S6 lugng 30"
-    // const obj = { "ocrOutput": recognizedText };
-    // const jsonString = await JSON.stringify(obj);
-    // try {
-    //   let res = await fetch(`${apiBE}`, {
-    //     method: "POST",
-    //     body: jsonString,
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   })
-    //   if (!res.ok) {
-    //     console.log("Picture upload fail", res.status);
-    //     setLoading(false);
-    //     setErrRes(true);
-    //     setResSucces(false)
-    //   }
-    //   else {
-    //     const finalData = await res.json();
-    //     await setInformation(finalData.data.result);
-    //     setLoading(false);
-    //     setErrRes(false);
-    //     setResSucces(true)
-    //   }
-    // } catch (err) {
-    //   console.error('Error get nlp result:', err);
-    //   setLoading(false);
-    //   setErrRes(true);
-    //   setResSucces(false)
-    // }
-
+    await setErrRes(false);
     const formData = new FormData();
     formData.append("file", {
       uri: uri,
@@ -116,14 +86,11 @@ export const Scan = (props: IScanProps) => {
       name: "image.jpg"
     } as any)
     console.log(formData);
-    const apiOcr = "https://medifind-ocr.proudsea-d3f4859a.eastasia.azurecontainerapps.io/process_image";
-    const apiBE = "localhost:3000/api/v1/nlp"
     try {
-      let response = await fetch(`${apiOcr}`, {
+      let response = await fetch(`${apiBE}`, {
         method: 'POST',
         body: formData,
         headers: {
-          // 'accept': 'application/json',
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -135,41 +102,10 @@ export const Scan = (props: IScanProps) => {
       }
       else {
         const data = await response.json();
-        // setLoading(false);
-        // setErrRes(false);
-        // setResSucces(true)
-        const recognizedText = data.results; // Extract the recognized text
-        const obj = { "ocrOutput": recognizedText };
-        const jsonString = await JSON.stringify(obj);
-        try {
-          let res = await fetch(`${apiBE}`, {
-            method: "POST",
-            body: jsonString,
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-          if (!res.ok) {
-            console.log("Picture upload fail", res.status);
-            setLoading(false);
-            setErrRes(true);
-            setResSucces(false)
-          }
-          else {
-            const finalData = await res.json();
-            await setInformation(finalData.data.result);
-            setLoading(false);
-            setErrRes(false);
-            setResSucces(true)
-          }
-        } catch (err) {
-          console.error('Error get nlp result:', err);
-          setLoading(false);
-          setErrRes(true);
-          setResSucces(false)
-        }
-
-
+        setLoading(false);
+        setErrRes(false);
+        setResSucces(true)
+        await setInformation(data);
       }
     } catch (error) {
       console.error('Error sending picture to OCRmodel:', error);
