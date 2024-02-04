@@ -30,27 +30,7 @@ export const Login = (props: LogInProps) => {
     }
     const apiSigin = "/.../api/v1/signin";
     function onLogin() {
-        fetch(apiSigin, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 200) {
-                    onNavigate(RootScreens.MAIN)
-                } else {
-                    alert(data.message)
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+        onNavigate(RootScreens.MAIN)
     }
     return (
         <View style={styles.container}>
@@ -96,7 +76,7 @@ export const Login = (props: LogInProps) => {
                         Forgot password?
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.login_btn}>
+                <TouchableOpacity style={styles.login_btn} onPress={onLogin}>
                     <Text style={{ color: "white" }}>
                         Login
                     </Text>

@@ -5,20 +5,28 @@ import Swiper from 'react-native-swiper';
 import * as Progress from 'react-native-progress';
 import { ScrollView } from 'native-base';
 import Checkbox from 'expo-checkbox';
+import { indexOf, set, stubArray } from 'lodash';
 interface Props {
   weekView?: boolean;
 }
+interface Reminder {
+  name: string,
+  amount: number,
+  hour: number,
+  minute: number,
+  state: boolean
+}
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
-interface Task { name: string, amount: string, hour: number, minute: number, state: boolean }
 const ExpandableCalendarScreen = (props: Props) => {
   const swiper = useRef();
   const [value, setValue] = useState(new Date());
   const [week, setWeek] = useState(0);
-  const [add, setAdd] = useState<boolean>(false);
-  const [name, setName] = useState<string>("");
-  const [time, setTime] = useState<string>("");
-  const [amount, setAmount] = useState<string>("")
+  const [isAdd, setIsAdd] = useState(false)
+  const [name, setName] = useState('')
+  const [amount, setAmount] = useState('')
+  const [hour, setHour] = useState('')
+  const [minute, setMinute] = useState('')
   /// manage date te
   const weeks = React.useMemo(() => {
     const start = moment().add(week, 'weeks').startOf('week');
@@ -35,67 +43,116 @@ const ExpandableCalendarScreen = (props: Props) => {
     });
   }, [week]);
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
   let curMonth = monthNames[new Date().getMonth()];
-  curMonth = "<" + curMonth + ">"
-  const [listTask, setListTask] = useState<Task[]>([
-    { name: "Panadol Extra", amount: "1 pill", hour: 8, minute: 0, state: false },
-    { name: "Panadol Extra", amount: "1 pill", hour: 8, minute: 30, state: false },
-  ])
-  let numOfTask = listTask.length;
-  let numOfTaskDone = 0;
-  listTask.map((el) => {
-    el.state === true ? numOfTaskDone++ : numOfTaskDone = numOfTaskDone + 0;
-  })
-  const handleCheckboxChange = (index: number) => {
-    setListTask(prevList => {
-      const newList = [...prevList];
-      newList[index].state = !newList[index].state;
-      newList.sort((a, b) => {
-        if (a.state !== b.state) {
-          return a.state ? 1 : -1; // true comes before false
-        } else if (a.hour !== b.hour) {
-          return a.hour - b.hour; // sort by hour
-        } else {
-          return a.minute - b.minute; // sort by minute if hour is the same
-        }
-      });
-      return newList;
-    });
-  };
-  function handleAdd() {
-    if (name === "" || time === "" || amount === "") {
-      alert('please enter all the information');
-    }
-    else {
-      const [hourString, minuteString] = time.split(":");
-      const hour = parseInt(hourString, 10);
-      const minute = parseInt(minuteString, 10);
-      const newPill: Task = { name: name, amount: amount, hour: hour, minute: minute, state: false };
-      const newList: Task[] = [...listTask, newPill];
-      newList.sort((a, b) => {
-        if (a.state !== b.state) {
-          return a.state ? -1 : 1; // true comes before false
-        } else if (a.hour !== b.hour) {
-          return a.hour - b.hour; // sort by hour
-        } else {
-          return a.minute - b.minute; // sort by minute if hour is the same
-        }
-      });
-      setName("");
-      setAmount("");
-      setTime("");
-      setListTask(newList);
-      setAdd(false);
+  let curYear = new Date().getFullYear();
+  let curDate = new Date().getDate();
 
+  const [reminderList, setReminderList] = useState<Reminder[]>([
+    {
+      name: "Panadol",
+      amount: 1,
+      hour: 10,
+      minute: 0,
+      state: false
+    },
+    {
+      name: "Phospholugel",
+      amount: 2,
+      hour: 17,
+      minute: 30,
+      state: false
+    },
+    {
+      name: "Exercise",
+      amount: 3,
+      hour: 7,
+      minute: 30,
+      state: true
     }
+  ]);
+  const [taskNumber, setTaskNumber] = useState(0)
+  useEffect(() => {
+    setTaskNumber(reminderList.length);
+  }, [reminderList])
+  const handleCheckbox = (index: number) => {
+    const newReminderList = [...reminderList]
+    newReminderList[index].state = !newReminderList[index].state
+    const sortedList = [...newReminderList].sort((a, b) => {
+      if (a.state !== b.state) {
+        return a.state ? 1 : -1;
+      }
+      else if (a.hour !== b.hour) {
+        return a.hour - b.hour;
+      } else {
+        return a.minute - b.minute;
+      }
+    });
+    setReminderList(sortedList)
   }
+  function handleClose() {
+    setIsAdd(false)
+    setName('')
+    setAmount('')
+    setHour('')
+    setMinute('')
+  }
+  function handleAdd() {
+    const newReminderList = [...reminderList]
+    newReminderList.push({
+      name: name,
+      amount: parseInt(amount),
+      hour: parseInt(hour),
+      minute: parseInt(minute),
+      state: false
+    })
+    const sortedList = [...newReminderList].sort((a, b) => {
+      if (a.state !== b.state) {
+        return a.state ? 1 : -1;
+      }
+      else if (a.hour !== b.hour) {
+        return a.hour - b.hour;
+      } else {
+        return a.minute - b.minute;
+      }
+    });
+    setReminderList(sortedList)
+    setIsAdd(false)
+    setName('')
+    setAmount('')
+    setHour('')
+    setMinute('')
+  }
+
+  useEffect(() => {
+    const sortedList = [...reminderList].sort((a, b) => {
+      if (a.state !== b.state) {
+        return a.state ? 1 : -1;
+      }
+      else if (a.hour !== b.hour) {
+        return a.hour - b.hour;
+      } else {
+        return a.minute - b.minute;
+      }
+    });
+
+    setReminderList(sortedList);
+  }, []);
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Reminder</Text>
-      <Text>{curMonth}</Text>
+      <View style={styles.time}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{curMonth}</Text>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{curDate},</Text>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{curYear} </Text>
+      </View>
+      <View style={{ width: width, justifyContent: 'center', paddingLeft: 20 }}>
+        <Text>
+          You have total {taskNumber} tasks today
+        </Text>
+      </View>
       <View style={styles.picker}>
         <Swiper
           index={1}
@@ -155,60 +212,71 @@ const ExpandableCalendarScreen = (props: Props) => {
           ))}
         </Swiper>
       </View>
-      <View>
-        <Progress.Bar progress={numOfTaskDone / numOfTask} width={width * 90 / 100} />
-      </View>
-      <View style={{ justifyContent: 'center', alignItems: "flex-start", width: width * 90 / 100, borderBottomWidth: 1 }}>
-        <Text style={{ color: "#407BFF" }}>{numOfTaskDone}/{numOfTask} pills take</Text>
-      </View>
-      <View style={{ height: height / 2 - 50 }}>
-        <Text style={{ justifyContent: 'center', alignItems: "flex-start", width: width * 90 / 100, fontWeight: 'bold', fontSize: 16 }}>Medicines for today</Text>
-        <ScrollView>
-          {
-            listTask.map((el, index) => {
-              return (<View style={[styles.taskContainer, { backgroundColor: el.state ? "#E0E0E0" : "#FFFFFF" }]} key={index}>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', columnGap: 10 }}>
-                  <Image source={el.state ? require('../img/pillTrue.png') : require('../img/pillFalse.png')} style={{ height: 40, width: 40 }} />
-                  <View>
-                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{el.name}</Text>
-                    <Text style={{ color: '#A1A8B0' }}>{el.amount}</Text>
+      <ScrollView>
+        {
+          reminderList.map((reminder, index) => {
+            return (
+              <View style={{ height: 80, width: width * 14 / 15, justifyContent: 'center', alignItems: 'center', marginTop: 20 }} key={index}>
+                <View style={styles.task_container}>
+                  <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: '600' }}>{reminder.name}</Text>
+                    <View style={{ flexDirection: 'row', columnGap: 10, alignItems: 'center', justifyContent: 'center' }}>
+                      <Image source={require('../img/clock.png')} style={{ height: 20, width: 20 }}></Image>
+                      <Text style={{ fontSize: 12 }}>{reminder.hour}:{reminder.minute}</Text>
+                    </View>
+
+                  </View>
+                  <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                    <Text style={{ color: "#8b8c89" }}>{reminder.amount} pill</Text>
+                    {
+                      reminder.state ?
+                        <Image source={require('../img/done.png')}></Image>
+                        :
+                        <Checkbox
+                          value={reminder.state}
+                          onValueChange={() => handleCheckbox(index)}
+                        />
+                    }
                   </View>
                 </View>
-                <Text style={{ color: '#407BFF', fontSize: 16, position: 'absolute', left: width * 2 / 3 - 10 }}  >{el.hour}:{el.minute}</Text>
-                <Checkbox style={{ height: 30, width: 30 }} value={el.state} onValueChange={() => handleCheckboxChange(index)} />
-              </View>)
-
-            })
-          }
-
-        </ScrollView>
-      </View>
-      {add === false ? <View style={styles.btnAdd}>
-        <TouchableOpacity onPress={() => setAdd(!add)}>
-          <Image source={require('../img/icon_add.png')} style={{ width: 60, height: 60 }} />
-        </TouchableOpacity>
-      </View> : <View></View>}
-
+              </View>
+            )
+          })
+        }
+      </ScrollView>
+      <TouchableOpacity style={{ position: 'absolute', right: 20, bottom: 0 }} onPress={() => setIsAdd(true)}>
+        <Image source={require('../img/add.png')} />
+      </TouchableOpacity>
       {
-        add &&
-        <View style={styles.overflow}>
-          <View style={styles.addContainer}>
-            <View style={styles.btnOff}>
-              <TouchableOpacity onPress={() => setAdd(!add)}>
-                <Image source={add ? require('../img/icon_subtract.png') : require('../img/icon_add.png')} style={{ width: 40, height: 40 }} />
+        isAdd &&
+        (
+          <View style={styles.add_container}>
+            <View style={styles.add_task}>
+              <View style={styles.header_add}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Create New Task</Text>
+                <TouchableOpacity onPress={handleClose}>
+                  <Image source={require('../img/close.png')} style={{ width: 40, height: 40 }} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.input_form}>
+                <View style={{ flexDirection: "row", justifyContent: 'space-around', alignItems: 'center' }}>
+                  <TextInput style={styles.input_name} placeholder='Name of medicine' value={name} onChangeText={(text) => setName(text)} />
+                  <TextInput style={styles.input_amount} keyboardType="number-pad" placeholder='amount' value={amount} onChangeText={(text) => setAmount(text)} />
+                </View>
+                <View style={{ flexDirection: "row", justifyContent: 'space-around', alignItems: 'center' }}>
+                  <TextInput style={styles.input_time} keyboardType="number-pad" placeholder='Hour' value={hour} onChangeText={(text) => setHour(text)} />
+                  <TextInput style={styles.input_time} keyboardType="number-pad" placeholder='Minute' value={minute} onChangeText={(text) => setMinute(text)} />
+                </View>
+                <View>
+                </View>
+              </View>
+              <TouchableOpacity style={styles.btn_add} onPress={handleAdd}>
+                <Text style={{ color: 'white' }}>Add task</Text>
               </TouchableOpacity>
             </View>
-            <Text>Add pill</Text>
-            <TextInput style={styles.inputDrugName} placeholder='Enter drug name' value={name} onChangeText={setName}></TextInput>
-            <View style={{ flexDirection: 'row', columnGap: width / 10 }}>
-              <TextInput style={styles.inputTime} placeholder='Enter time' value={time} onChangeText={setTime}></TextInput>
-              <TextInput style={styles.inputAmount} placeholder='Enter ammount' value={amount} onChangeText={setAmount}></TextInput>
-            </View>
-            <TouchableOpacity style={styles.btn}><Text style={{ color: 'white', fontWeight: 'bold' }} onPress={handleAdd}>Add</Text></TouchableOpacity>
           </View>
-        </View>
+        )
       }
-
     </View>
   )
 }
@@ -220,7 +288,7 @@ const styles = StyleSheet.create({
     paddingTop: height / 15,
     alignItems: 'center',
     rowGap: 10,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#FFFFFF",
     width: width,
   },
   picker: {
@@ -259,78 +327,90 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#111',
   },
-  taskContainer: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20, height: 80, borderRadius: 4, paddingLeft: 10, paddingRight: 10
+  time: {
+    width: width,
+    flexDirection: 'row',
+    paddingLeft: 20,
+    columnGap: 10,
   },
-  btnAdd: {
-    position: 'absolute',
-    bottom: 20,
-    right: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+  task_container: {
     flexDirection: 'column',
-    zIndex: 100000
+    width: 14 * width / 15 - 10,
+    padding: 10,
+    backgroundColor: '#fff', // Add this line
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    height: 80,
+    justifyContent: 'center',
+    borderRadius: 20,
+    marginBottom: 16
   },
-  overflow: {
+  add_container: {
     height: height,
     width: width,
-    //  backgroundColor: '#e9ecef',
     position: 'absolute',
-    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center'
+  },
+  add_task: {
+    width: width,
+    backgroundColor: 'white',
     alignItems: 'center',
   },
-
-  addContainer: {
-    height: height / 4,
-    width: width * 90 / 100,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 5,
+  header_add: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: height / 12,
+    width: width,
+    padding: 20
+  },
+  input_form: {
+    height: height / 6,
+    width: width,
+    rowGap: 20,
+    justifyContent: 'center',
+  },
+  input_name: {
+    height: 50,
+    width: width * 2 / 3 - 20,
+    borderColor: 'gray',
     borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    alignItems: 'center',
-    rowGap: 10
-  },
-  inputDrugName: {
-    width: width * 80 / 100,
-    height: 60,
-    backgroundColor: '#F5F5F5',
-    paddingLeft: 10,
-    borderRadius: 10
-  },
-  inputAmount: {
-    width: width * 40 / 100,
-    height: 60,
-    backgroundColor: '#F5F5F5',
-    paddingLeft: 10,
-    borderRadius: 10
-  },
-  inputTime: {
-    width: width * 30 / 100,
-    height: 60,
-    backgroundColor: '#F5F5F5',
-    paddingLeft: 10,
-    borderRadius: 10
-  },
-  btn: {
-    backgroundColor: '#407BFF',
-    width: 80,
-    height: 40,
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center'
+    paddingLeft: 10,
+    fontSize: 16
   },
-  btnOff: {
-    position: 'absolute',
-    height: 30,
-    width: 30,
-    top: -20,
-    right: -10,
+  input_amount: {
+    height: 50,
+    width: width / 3 - 20,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingLeft: 10,
+    fontSize: 16
+  },
+  input_time: {
+    height: 50,
+    width: width / 2 - 20,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingLeft: 10,
+    fontSize: 16
+  },
+  btn_add: {
+    width: width * 14 / 15,
+    height: 60,
+    backgroundColor: '#407BFF',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 100000,
-  },
+    marginBottom: 20,
+  }
 })
 

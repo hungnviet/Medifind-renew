@@ -24,7 +24,7 @@ export interface IChatMediGPTProps {
 
 
 
-export const ChatMediGPT  = (props: IChatMediGPTProps) => {
+export const ChatMediGPT = (props: IChatMediGPTProps) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { onNavigate } = props;
@@ -121,7 +121,7 @@ export const ChatMediGPT  = (props: IChatMediGPTProps) => {
       <TouchableOpacity style={{
         position: "absolute",
         top: 50,
-        left: 20, backgroundColor: '#407CE2', width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 30,zIndex:100
+        left: 20, backgroundColor: '#407CE2', width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 30, zIndex: 100
       }}
         onPress={() => onNavigate(MainScreens.HOME)}>
         <Ionicons name="home-outline" color={'white'} size={24} />
@@ -154,6 +154,7 @@ export const ChatMediGPT  = (props: IChatMediGPTProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#caf0f8"
   },
   chatScreen: {
     marginTop: 50,

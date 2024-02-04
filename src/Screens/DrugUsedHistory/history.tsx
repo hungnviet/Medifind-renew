@@ -36,7 +36,7 @@ export const History = (props: HistoryProps) => {
                 <View style={{ flex: 4, }}>
                     <TextInput style={{ borderWidth: 1, height: 60, borderRadius: 10, paddingLeft: 45 }} placeholder='Search date or name of medicine' />
                     <TouchableOpacity style={{ position: 'absolute', zIndex: 100, height: 55, width: 55, left: 0, justifyContent: 'center', alignItems: 'center' }}>
-                        <Image source={require('../Home/iamges/find.png')} style={{ height: 40, width: 40, borderRadius: 40 }} />
+
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
