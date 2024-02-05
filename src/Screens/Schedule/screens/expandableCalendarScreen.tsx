@@ -14,7 +14,8 @@ interface Reminder {
   amount: number,
   hour: number,
   minute: number,
-  state: boolean
+  state: boolean,
+  id: string
 }
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -27,6 +28,7 @@ const ExpandableCalendarScreen = (props: Props) => {
   const [amount, setAmount] = useState('')
   const [hour, setHour] = useState('')
   const [minute, setMinute] = useState('')
+  const [period, setPeriod] = useState('')
   /// manage date te
   const weeks = React.useMemo(() => {
     const start = moment().add(week, 'weeks').startOf('week');
@@ -56,21 +58,24 @@ const ExpandableCalendarScreen = (props: Props) => {
       amount: 1,
       hour: 10,
       minute: 0,
-      state: false
+      state: false,
+      id: "abc"
     },
     {
       name: "Phospholugel",
       amount: 2,
       hour: 17,
       minute: 30,
-      state: false
+      state: false,
+      id: "def"
     },
     {
       name: "Exercise",
       amount: 3,
       hour: 7,
       minute: 30,
-      state: true
+      state: true,
+      id: "ghi"
     }
   ]);
   const [taskNumber, setTaskNumber] = useState(0)
@@ -100,13 +105,15 @@ const ExpandableCalendarScreen = (props: Props) => {
     setMinute('')
   }
   function handleAdd() {
+    /// lúc sau là gửi đi xong lấy list reminder về r add vào
     const newReminderList = [...reminderList]
     newReminderList.push({
       name: name,
       amount: parseInt(amount),
       hour: parseInt(hour),
       minute: parseInt(minute),
-      state: false
+      state: false,
+      id: '111'
     })
     const sortedList = [...newReminderList].sort((a, b) => {
       if (a.state !== b.state) {
@@ -267,7 +274,9 @@ const ExpandableCalendarScreen = (props: Props) => {
                   <TextInput style={styles.input_time} keyboardType="number-pad" placeholder='Hour' value={hour} onChangeText={(text) => setHour(text)} />
                   <TextInput style={styles.input_time} keyboardType="number-pad" placeholder='Minute' value={minute} onChangeText={(text) => setMinute(text)} />
                 </View>
-                <View>
+                <View style={{ flexDirection: "row", justifyContent: 'space-between', alignItems: 'center', paddingLeft: 20, paddingRight: 20 }}>
+                  <Text>How many days for task</Text>
+                  <TextInput keyboardType='number-pad' placeholder='period ?' style={styles.input_period} value={period} onChangeText={(text) => setPeriod(text)}></TextInput>
                 </View>
               </View>
               <TouchableOpacity style={styles.btn_add} onPress={handleAdd}>
@@ -356,12 +365,13 @@ const styles = StyleSheet.create({
     width: width,
     position: 'absolute',
     backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'center'
+    paddingTop: height / 4
   },
   add_task: {
     width: width,
     backgroundColor: 'white',
     alignItems: 'center',
+    rowGap: 10
   },
   header_add: {
     flexDirection: 'row',
@@ -372,7 +382,6 @@ const styles = StyleSheet.create({
     padding: 20
   },
   input_form: {
-    height: height / 6,
     width: width,
     rowGap: 20,
     justifyContent: 'center',
@@ -398,6 +407,15 @@ const styles = StyleSheet.create({
   input_time: {
     height: 50,
     width: width / 2 - 20,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingLeft: 10,
+    fontSize: 16
+  },
+  input_period: {
+    height: 50,
+    width: width / 4,
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 10,

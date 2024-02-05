@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Colors } from "@/Theme/Variables";
 import { StatusBar } from "expo-status-bar";
 const width = Dimensions.get("screen").width;
+const height = Dimensions.get("screen").height;
 export interface IScanProps {
   onCaptureSuccess: (file: CameraCapturedPicture) => void;
 }
@@ -25,43 +26,38 @@ interface inforPobs {
   SQD: string,
   xuatSu: string,
   congTy: string,
-  dangBaoChe: string,
   diaChiSX: string,
 }
 export function InforContainer({ infor }: { infor: inforPobs }) {
   return (
-    <View style={{
-      backgroundColor: 'white', width: width * 8 / 9, borderRadius: 8, borderColor: '#F1F3F5', marginTop: 10, borderWidth: 2, paddingTop: 12, paddingLeft: 15, paddingRight: 15, shadowOffset: { width: -5, height: 5, },
-      shadowColor: '#171717',
-      shadowOpacity: 0.6,
-      shadowRadius: 3,
-    }}>
-      <View style={{ flexDirection: 'column', justifyContent: 'space-around', width: '100%' }}>
-        <Text style={{ fontSize: 18, textTransform: 'uppercase', fontWeight: 'bold' }}>{infor.ten}</Text>
-        <Text style={{ fontSize: 12 }}>Hoạt chất chính: {infor.hoatChatChinh}</Text>
+    <View style={styles.result_container}>
+      <View style={styles.result_name}>
+        <Text style={{ color: 'white', fontWeight: '500' }}>{infor.ten}</Text>
       </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-        <Text style={{ fontSize: 12 }}>SĐK :{infor.SDK}</Text>
-        <Text style={{ fontSize: 12 }}>SQĐ :{infor.SQD}</Text>
+      <View style={styles.result_infro}>
+        <Text style={{ fontWeight: 'bold' }}>{infor.congTy}</Text>
+        <View style={{ flexDirection: 'row', columnGap: 10 }}>
+          <Text >SĐK: {infor.SDK}</Text>
+          <Text>SQĐ: {infor.SQD}</Text>
+        </View>
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>Main active ingredient </Text>
+          <Text>{infor.hoatChatChinh}</Text>
+        </View>
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>Address</Text>
+          <Text>{infor.diaChiSX}</Text>
+        </View>
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>Origin</Text>
+          <Text>{infor.xuatSu}</Text>
+        </View>
       </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-        <Text style={{ fontSize: 12 }}>Xuất xứ:</Text>
-        <Text style={{ fontSize: 12 }}>{infor.xuatSu}</Text>
-      </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-        <Text style={{ fontSize: 12 }}>Công ty:</Text>
-        <Text style={{ fontSize: 12 }}>{infor.congTy}</Text>
-      </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-        <Text style={{ fontSize: 12 }}>Dạng bào chế:</Text>
-        <Text style={{ fontSize: 12 }}>{infor.dangBaoChe}</Text>
-      </View>
-      <Text style={{ fontSize: 12 }}>Địa chỉ sản xuất:</Text>
-      <Text style={{ fontSize: 12 }}>{infor.diaChiSX}</Text>
     </View>
 
   )
 }
+
 
 export const Scan = (props: IScanProps) => {
   const { onCaptureSuccess } = props;
@@ -175,7 +171,7 @@ export const Scan = (props: IScanProps) => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#e6f6ff",
+        backgroundColor: "#FFFFFF",
       }}
     >
       <View style={styles.header}>
@@ -220,11 +216,13 @@ export const Scan = (props: IScanProps) => {
         }{
           loading === false && errRes === false && resSucces === true && (
             <View style={styles.resContainer}>
-              <Text>Result</Text>
-              <ScrollView>
+              <View style={{ width: width, padding: 20 }}>
+                <Text style={{ fontWeight: 'bold' }}>{information.length} results have been found</Text>
+              </View>
+              <ScrollView >
                 {information.map((el, index) => <InforContainer infor={el} key={index} />)}
               </ScrollView>
-              <TouchableOpacity onPress={() => { setErrRes(false); setLoading(false); setResSucces(false) }}><Text>Again</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => { setErrRes(false); setLoading(false); setResSucces(false) }} style={{ width: width * 8 / 10, height: 60, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#407BFF', marginTop: 10 }}><Text style={{ color: '#407BFF' }}>Again</Text></TouchableOpacity>
             </View>
           )
         }
@@ -294,5 +292,26 @@ const styles = StyleSheet.create({
   },
   resContainer: {
     justifyContent: 'center', alignItems: 'center'
+  },
+  result_container: {
+    width: width * 90 / 100,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginBottom: 20,
+    borderColor: '#ADADAD',
+    borderWidth: 1
+  },
+  result_name: {
+    width: width * 90 / 100,
+    backgroundColor: '#244EB9',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    height: 40,
+    justifyContent: 'center',
+    paddingLeft: 10
+  },
+  result_infro: {
+    padding: 10,
+    rowGap: 10
   }
 });

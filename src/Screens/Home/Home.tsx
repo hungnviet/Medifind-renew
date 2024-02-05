@@ -92,25 +92,25 @@ export const Home = (props: IHomeProps) => {
         </View>
       </View>
       <View style={styles.service_container}>
-        <Text style={{ fontSize: 22, fontWeight: 'bold' }}>Services</Text>
+        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Services</Text>
         <ScrollView horizontal={true}>
-          <TouchableOpacity style={styles.btn_service}>
+          <TouchableOpacity style={styles.btn_service} onPress={() => onNavigate(MainScreens.CHAT)}>
             <Image source={require('./iamges/chat.png')} style={styles.image_service} />
             <Text style={{ color: 'white', fontWeight: 'bold' }}>Chat</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btn_service}>
+          <TouchableOpacity style={styles.btn_service} onPress={() => onNavigate(MainScreens.SCAN)}>
             <Image source={require('./iamges/scan.png')} style={styles.image_service} />
             <Text style={{ color: 'white', fontWeight: 'bold' }}>Scan</Text>
           </TouchableOpacity >
-          <TouchableOpacity style={styles.btn_service}>
+          <TouchableOpacity style={styles.btn_service} onPress={() => onNavigate(MainScreens.HISTORY)}>
             <Image source={require('./iamges/history.png')} style={styles.image_service} />
             <Text style={{ color: 'white', fontWeight: 'bold' }}>History</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btn_service}>
+          <TouchableOpacity style={styles.btn_service} onPress={() => onNavigate(MainScreens.SCHEDULE)}>
             <Image source={require('./iamges/calendar.png')} style={styles.image_service} />
             <Text style={{ color: 'white', fontWeight: 'bold' }}>Reminder</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btn_service}>
+          <TouchableOpacity style={styles.btn_service} onPress={() => onNavigate(MainScreens.SEARCH)}>
             <Image source={require('./iamges/search2.png')} style={styles.image_service} />
             <Text style={{ color: 'white', fontWeight: 'bold' }}>Search</Text>
           </TouchableOpacity>
@@ -118,11 +118,11 @@ export const Home = (props: IHomeProps) => {
       </View>
       <View style={styles.reminder_container}>
         <View style={styles.reminder_header}>
-          <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
             Reminders
           </Text>
           <TouchableOpacity>
-            <Text style={{ color: "#407BFF", fontSize: 16, textDecorationLine: "underline", fontWeight: "200" }}>
+            <Text style={{ color: "#407BFF", fontSize: 14, textDecorationLine: "underline", fontWeight: "200" }}>
               See all
             </Text>
           </TouchableOpacity>
@@ -235,12 +235,12 @@ const styles = StyleSheet.create(
       marginTop: 20
     },
     image_service: {
-      height: 60,
-      width: 60
+      height: 40,
+      width: 40
     },
     btn_service: {
-      height: 100,
-      width: 120,
+      height: 80,
+      width: 100,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: "#407BFF",

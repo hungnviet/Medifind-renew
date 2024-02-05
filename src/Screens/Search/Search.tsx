@@ -28,39 +28,33 @@ interface inforPobs {
   SQD: string,
   xuatSu: string,
   congTy: string,
-  dangBaoChe: string,
   diaChiSX: string,
 }
 export function InforContainer({ infor }: { infor: inforPobs }) {
   return (
-    <View style={{
-      backgroundColor: 'white', width: width * 8 / 9, borderRadius: 8, borderColor: color.grey_light, marginTop: 10, borderWidth: 2, paddingTop: 12, paddingLeft: 15, paddingRight: 15, shadowOffset: { width: -5, height: 5, },
-      shadowColor: '#171717',
-      shadowOpacity: 0.6,
-      shadowRadius: 3,
-    }}>
-      <View style={{ flexDirection: 'column', justifyContent: 'space-around', width: '100%' }}>
-        <Text style={{ fontSize: 18, textTransform: 'uppercase', fontWeight: 'bold' }}>{infor.ten}</Text>
-        <Text style={{ fontSize: 12 }}>Hoạt chất chính: {infor.hoatChatChinh}</Text>
+    <View style={styles.result_container}>
+      <View style={styles.result_name}>
+        <Text style={{ color: 'white', fontWeight: '500' }}>{infor.ten}</Text>
       </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-        <Text style={{ fontSize: 12 }}>SĐK :{infor.SDK}</Text>
-        <Text style={{ fontSize: 12 }}>SQĐ :{infor.SQD}</Text>
+      <View style={styles.result_infro}>
+        <Text style={{ fontWeight: 'bold' }}>{infor.congTy}</Text>
+        <View style={{ flexDirection: 'row', columnGap: 10 }}>
+          <Text >SĐK: {infor.SDK}</Text>
+          <Text>SQĐ: {infor.SQD}</Text>
+        </View>
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>Main active ingredient </Text>
+          <Text>{infor.hoatChatChinh}</Text>
+        </View>
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>Address</Text>
+          <Text>{infor.diaChiSX}</Text>
+        </View>
+        <View>
+          <Text style={{ fontWeight: 'bold' }}>Origin</Text>
+          <Text>{infor.xuatSu}</Text>
+        </View>
       </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-        <Text style={{ fontSize: 12 }}>Xuất xứ:</Text>
-        <Text style={{ fontSize: 12 }}>{infor.xuatSu}</Text>
-      </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-        <Text style={{ fontSize: 12 }}>Công ty:</Text>
-        <Text style={{ fontSize: 12 }}>{infor.congTy}</Text>
-      </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-start', columnGap: 15, width: '100%' }}>
-        <Text style={{ fontSize: 12 }}>Dạng bào chế:</Text>
-        <Text style={{ fontSize: 12 }}>{infor.dangBaoChe}</Text>
-      </View>
-      <Text style={{ fontSize: 12 }}>Địa chỉ sản xuất:</Text>
-      <Text style={{ fontSize: 12 }}>{infor.diaChiSX}</Text>
     </View>
 
   )
@@ -211,15 +205,27 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     width: width * 90 / 100,
     marginTop: 20
+  },
+  result_container: {
+    width: width * 90 / 100,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginBottom: 20,
+    borderColor: '#ADADAD',
+    borderWidth: 1
+  },
+  result_name: {
+    width: width * 90 / 100,
+    backgroundColor: '#244EB9',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    height: 40,
+    justifyContent: 'center',
+    paddingLeft: 10
+  },
+  result_infro: {
+    padding: 10,
+    rowGap: 10
   }
 });
-const color = {
-  grey_white: '#F3F5Fc',
-  grey_light: '#F1F3F5',
-  grey_medium: '#B4BAC9',
-  blue_light: '#98B3E1',
-  blue_normal: '#407CE2',
-  blue_dark: '#223A6A',
-  blue_black: '#213359'
 
-}
