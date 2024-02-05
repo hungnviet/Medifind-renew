@@ -7,11 +7,12 @@ import { useState } from "react"
 
 export interface LogInProps {
     onNavigate: (screen: RootScreens) => void;
+    onNavigateHome: (userID: string) => void;
 }
 
 export const Login = (props: LogInProps) => {
 
-    const { onNavigate } = props;
+    const { onNavigate, onNavigateHome } = props;
     const [focusEmail, setFocusEmail] = useState(false)
     const [focusPassword, setFocusPassword] = useState(false)
     const [email, setEmail] = useState('')
@@ -48,7 +49,7 @@ export const Login = (props: LogInProps) => {
                     console.log(userID);
                     setEmail('')
                     setPassword('')
-                    onNavigate(RootScreens.MAIN)
+                    onNavigateHome(userID)
                 }
                 else {
                     alert(data.error)

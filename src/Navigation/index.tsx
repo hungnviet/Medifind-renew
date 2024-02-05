@@ -4,11 +4,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { MainNavigator } from "./Main";
 import { WelcomeContainer } from "@/Screens/Welcome";
-import { RootScreens } from "@/Screens";
+import { MainScreens, RootScreens } from "@/Screens";
 import { LoginContainer } from "@/Screens/LogIn/LoginContainer";
 import { SignUpContainer } from "@/Screens/SignUp/SignUpContainer";
 export type RootStackParamList = {
-  [RootScreens.MAIN]: { userID: string };
+  [RootScreens.MAIN]: undefined;
   [RootScreens.WELCOME]: undefined;
   [RootScreens.LOGIN]: undefined;
   [RootScreens.SIGNUP]: undefined

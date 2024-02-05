@@ -2,11 +2,13 @@ import React from "react";
 import { Login } from "./Login";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/Navigation";
-import { RootScreens } from "..";
+import { RootScreens, MainScreens } from "..";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { MainBottomBarParamList } from "@/Navigation/Main";
 
-type LogInNavigatorProps = NativeStackScreenProps<
-    RootStackParamList,
-    RootScreens.LOGIN
+type LogInNavigatorProps = CompositeScreenProps<
+NativeStackScreenProps<RootStackParamList, RootScreens.LOGIN>,
+NativeStackScreenProps<MainBottomBarParamList>
 >;
 
 export const LoginContainer = ({
@@ -15,6 +17,9 @@ export const LoginContainer = ({
     const onNavigate = (screen: RootScreens) => {
         navigation.navigate(screen);
     };
+    const onNavigateHome = (userID: string) => {
+        navigation.navigate(MainScreens.HOME, {userID: userID});
+    }
 
-    return <Login onNavigate={onNavigate} />;
+    return <Login onNavigate={onNavigate} onNavigateHome={onNavigateHome} />;
 };
