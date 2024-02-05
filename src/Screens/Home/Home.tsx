@@ -1,5 +1,5 @@
 import { i18n, LocalizationKey } from "@/Localization";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, Dimensions, ScrollView, TextInput } from "react-native";
 import Checkbox from 'expo-checkbox';
 import { MainScreens } from "..";
@@ -12,10 +12,17 @@ export interface IHomeProps {
 
 
 interface Reminder {
-  name: string,
+  __v: number,
+  _id: string,
   amount: number,
-  time: string,
-  state: boolean
+  hour: number,
+  minute: number,
+  name: string,
+  period: number,
+  start_date: number,
+  start_month: number,
+  start_year: number,
+  state: boolean,
 }
 export function Task({ task }: { task: Reminder }) {
   return (
@@ -23,13 +30,10 @@ export function Task({ task }: { task: Reminder }) {
       <View style={styles.task_container}>
         <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
           <Text style={{ fontSize: 20, fontWeight: '600' }}>{task.name}</Text>
-          <Text style={{ fontSize: 12 }}>{task.time}</Text>
+          <Text style={{ fontSize: 12 }}>{task.hour}:{task.minute}</Text>
         </View>
         <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
           <Text style={{ color: "#8b8c89" }}>{task.amount} pill</Text>
-          <TouchableOpacity style={{ height: 30, width: 40, backgroundColor: 'black', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
-            <Image source={require('./iamges/arrow-right.png')} style={{ height: 20, width: 20 }} />
-          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -41,26 +45,40 @@ export const Home = (props: IHomeProps) => {
   const { onNavigate } = props;
   const [userName, setUserName] = useState('Thu')
   const [reminders, setReminders] = useState<Reminder[]>([])
-  const reminderList: Reminder[] = [
-    {
-      name: "Panadol",
-      amount: 1,
-      time: "10:00 AM",
-      state: false
-    },
-    {
-      name: "Phospholugel",
-      amount: 2,
-      time: "5:00 PM",
-      state: false
-    },
-    {
-      name: "Exercise",
-      amount: 3,
-      time: "7:30 AM",
-      state: true
+
+  const userID = "65c0733201f9f94bf96ccf87";
+  const api_reminder = `https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/reminder/${userID}`
+  useEffect(() => {
+    async function getReminder() {
+      try {
+        let response = await fetch(api_reminder);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        else {
+          let data = await response.json();
+          const arr = data.data.reminders;
+          console.log(arr.length);
+          const sortedList = [...arr].sort((a, b) => {
+            if (a.state !== b.state) {
+              return a.state ? 1 : -1;
+            }
+            else if (a.hour !== b.hour) {
+              return a.hour - b.hour;
+            } else {
+              return a.minute - b.minute;
+            }
+          });
+          setReminders(sortedList);
+          ///console.log(reminders.length);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
-  ];
+    getReminder();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -121,21 +139,16 @@ export const Home = (props: IHomeProps) => {
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>
             Reminders
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => onNavigate(MainScreens.SCHEDULE)}>
             <Text style={{ color: "#407BFF", fontSize: 14, textDecorationLine: "underline", fontWeight: "200" }}>
               See all
             </Text>
           </TouchableOpacity>
         </View>
-        <ScrollView style={{ height: 150 }}>
+        <ScrollView style={{ height: 200 }}>
           {
-            reminderList.slice(0, 3).map((reminder, index) => {
-              if (!reminder.state) {
-                return (
-                  <Task task={reminder} key={index} />
-                )
-              }
-
+            reminders.filter((reminder) => reminder.state === false).map((reminder, index) => {
+              return <Task task={reminder} key={index} />
             })
           }
         </ScrollView>

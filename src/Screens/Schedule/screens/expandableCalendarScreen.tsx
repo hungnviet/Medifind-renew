@@ -10,15 +10,49 @@ interface Props {
   weekView?: boolean;
 }
 interface Reminder {
-  name: string,
+  __v: number,
+  _id: string,
   amount: number,
   hour: number,
   minute: number,
+  name: string,
+  period: number,
+  start_date: number,
+  start_month: number,
+  start_year: number,
   state: boolean,
-  id: string
 }
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
+
+export function Task({ task, handleCheckBox }: { task: Reminder, handleCheckBox: (task: Reminder) => void }) {
+  return (
+    <View style={{ height: 80, width: width * 14 / 15, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+      <View style={styles.task_container}>
+        <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, fontWeight: '600' }}>{task.name}</Text>
+          <View style={{ flexDirection: 'row', columnGap: 10, alignItems: 'center', justifyContent: 'center' }}>
+            <Image source={require('../img/clock.png')} style={{ height: 20, width: 20 }}></Image>
+            <Text style={{ fontSize: 12 }}>{task.hour}:{task.minute}</Text>
+          </View>
+
+        </View>
+        <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+          <Text style={{ color: "#8b8c89" }}>{task.amount} pill</Text>
+          {
+            task.state ?
+              <Image source={require('../img/done.png')}></Image>
+              :
+              <Checkbox
+                value={task.state}
+                onValueChange={() => handleCheckBox(task)}
+              />
+          }
+        </View>
+      </View>
+    </View>
+  )
+}
 const ExpandableCalendarScreen = (props: Props) => {
   const swiper = useRef();
   const [value, setValue] = useState(new Date());
@@ -51,51 +85,74 @@ const ExpandableCalendarScreen = (props: Props) => {
   let curMonth = monthNames[new Date().getMonth()];
   let curYear = new Date().getFullYear();
   let curDate = new Date().getDate();
-
-  const [reminderList, setReminderList] = useState<Reminder[]>([
-    {
-      name: "Panadol",
-      amount: 1,
-      hour: 10,
-      minute: 0,
-      state: false,
-      id: "abc"
-    },
-    {
-      name: "Phospholugel",
-      amount: 2,
-      hour: 17,
-      minute: 30,
-      state: false,
-      id: "def"
-    },
-    {
-      name: "Exercise",
-      amount: 3,
-      hour: 7,
-      minute: 30,
-      state: true,
-      id: "ghi"
-    }
-  ]);
   const [taskNumber, setTaskNumber] = useState(0)
+  const [reminders, setReminders] = useState<Reminder[]>([])
+
+  const userID = "65c0733201f9f94bf96ccf87";
+  const api_reminder = `https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/reminder/${userID}`
   useEffect(() => {
-    setTaskNumber(reminderList.length);
-  }, [reminderList])
-  const handleCheckbox = (index: number) => {
-    const newReminderList = [...reminderList]
-    newReminderList[index].state = !newReminderList[index].state
-    const sortedList = [...newReminderList].sort((a, b) => {
-      if (a.state !== b.state) {
-        return a.state ? 1 : -1;
+    async function getReminder() {
+      try {
+        let response = await fetch(api_reminder);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        else {
+          let data = await response.json();
+          const arr = data.data.reminders;
+          console.log(arr.length);
+          const sortedList = [...arr].sort((a, b) => {
+            if (a.state !== b.state) {
+              return a.state ? 1 : -1;
+            }
+            else if (a.hour !== b.hour) {
+              return a.hour - b.hour;
+            } else {
+              return a.minute - b.minute;
+            }
+          });
+          setReminders(sortedList);
+          setTaskNumber(sortedList.length);
+        }
+      } catch (error) {
+        console.error('Error:', error);
       }
-      else if (a.hour !== b.hour) {
-        return a.hour - b.hour;
-      } else {
-        return a.minute - b.minute;
+    }
+    getReminder();
+  }, []);
+
+  async function handleCheckBox(task: Reminder) {
+    const API = "https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/reminder/";
+    const reminderID = task._id;
+    try {
+      let response = await fetch(`${API}/${reminderID}/${userID}`, {
+        method: 'PUT',
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    });
-    setReminderList(sortedList)
+      else {
+        const arr = reminders.map((reminder) => {
+          if (reminder._id === task._id) {
+            return { ...reminder, state: !reminder.state };
+          }
+          return reminder;
+        });
+        const sortedList = [...arr].sort((a, b) => {
+          if (a.state !== b.state) {
+            return a.state ? 1 : -1;
+          }
+          else if (a.hour !== b.hour) {
+            return a.hour - b.hour;
+          } else {
+            return a.minute - b.minute;
+          }
+        });
+        setReminders(sortedList);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
   function handleClose() {
     setIsAdd(false)
@@ -104,49 +161,56 @@ const ExpandableCalendarScreen = (props: Props) => {
     setHour('')
     setMinute('')
   }
-  function handleAdd() {
-    /// lúc sau là gửi đi xong lấy list reminder về r add vào
-    const newReminderList = [...reminderList]
-    newReminderList.push({
+  async function handleAdd() {
+    const API = "https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/reminder/";
+    const data = {
       name: name,
       amount: parseInt(amount),
       hour: parseInt(hour),
       minute: parseInt(minute),
-      state: false,
-      id: '111'
-    })
-    const sortedList = [...newReminderList].sort((a, b) => {
-      if (a.state !== b.state) {
-        return a.state ? 1 : -1;
+      period: parseInt(period),
+      start_date: new Date().getDate(),
+      start_month: new Date().getMonth(),
+      start_year: new Date().getFullYear(),
+    }
+    try {
+      const response = await fetch(`${API}/${userID}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-      else if (a.hour !== b.hour) {
-        return a.hour - b.hour;
-      } else {
-        return a.minute - b.minute;
+      else {
+        const data = await response.json();
+        const newReminder = data.data.reminder
+        const arr = [...reminders, newReminder];
+        const sortedList = [...arr].sort((a, b) => {
+          if (a.state !== b.state) {
+            return a.state ? 1 : -1;
+          }
+          else if (a.hour !== b.hour) {
+            return a.hour - b.hour;
+          } else {
+            return a.minute - b.minute;
+          }
+        });
+        setReminders(sortedList);
+        setTaskNumber(sortedList.length);
+        setIsAdd(false)
+        setName('')
+        setAmount('')
+        setHour('')
+        setMinute('')
       }
-    });
-    setReminderList(sortedList)
-    setIsAdd(false)
-    setName('')
-    setAmount('')
-    setHour('')
-    setMinute('')
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
-
-  useEffect(() => {
-    const sortedList = [...reminderList].sort((a, b) => {
-      if (a.state !== b.state) {
-        return a.state ? 1 : -1;
-      }
-      else if (a.hour !== b.hour) {
-        return a.hour - b.hour;
-      } else {
-        return a.minute - b.minute;
-      }
-    });
-
-    setReminderList(sortedList);
-  }, []);
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Reminder</Text>
@@ -221,33 +285,8 @@ const ExpandableCalendarScreen = (props: Props) => {
       </View>
       <ScrollView>
         {
-          reminderList.map((reminder, index) => {
-            return (
-              <View style={{ height: 80, width: width * 14 / 15, justifyContent: 'center', alignItems: 'center', marginTop: 20 }} key={index}>
-                <View style={styles.task_container}>
-                  <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
-                    <Text style={{ fontSize: 20, fontWeight: '600' }}>{reminder.name}</Text>
-                    <View style={{ flexDirection: 'row', columnGap: 10, alignItems: 'center', justifyContent: 'center' }}>
-                      <Image source={require('../img/clock.png')} style={{ height: 20, width: 20 }}></Image>
-                      <Text style={{ fontSize: 12 }}>{reminder.hour}:{reminder.minute}</Text>
-                    </View>
-
-                  </View>
-                  <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ color: "#8b8c89" }}>{reminder.amount} pill</Text>
-                    {
-                      reminder.state ?
-                        <Image source={require('../img/done.png')}></Image>
-                        :
-                        <Checkbox
-                          value={reminder.state}
-                          onValueChange={() => handleCheckbox(index)}
-                        />
-                    }
-                  </View>
-                </View>
-              </View>
-            )
+          reminders.map((reminder, index) => {
+            return <Task task={reminder} key={index} handleCheckBox={handleCheckBox} />
           })
         }
       </ScrollView>

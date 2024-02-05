@@ -45,6 +45,38 @@ export const SignUp = (props: SignUpProps) => {
     function onBlurConfirmPassword() {
         setFocusConfirmPassword(false)
     }
+    const API_SignUp = "https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/signup"
+    async function onSignUp() {
+        if (password === confirmPassword) {
+            const data = {
+                email: email,
+                password: password,
+                name: name
+            }
+            await fetch(API_SignUp, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        alert("Register success please login to continue")
+                        onNavigate(RootScreens.LOGIN)
+                    }
+                    else {
+                        alert(data.error)
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+        else {
+            alert("Password and Confirm Password are not match")
+        }
+    }
     return (
         <View style={styles.container}>
             <View style={styles.logo_container}>
@@ -107,7 +139,7 @@ export const SignUp = (props: SignUpProps) => {
                 </View>
 
             </View>
-            <TouchableOpacity style={styles.login_btn}>
+            <TouchableOpacity style={styles.login_btn} onPress={onSignUp}>
                 <Text style={{ color: "white" }}>
                     Register
                 </Text>

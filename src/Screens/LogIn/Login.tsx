@@ -10,6 +10,7 @@ export interface LogInProps {
 }
 
 export const Login = (props: LogInProps) => {
+
     const { onNavigate } = props;
     const [focusEmail, setFocusEmail] = useState(false)
     const [focusPassword, setFocusPassword] = useState(false)
@@ -28,9 +29,34 @@ export const Login = (props: LogInProps) => {
             setFocusEmail(false)
         }
     }
-    const apiSigin = "/.../api/v1/signin";
-    function onLogin() {
-        onNavigate(RootScreens.MAIN)
+    const API_Login = "https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/signin"
+    async function onLogin() {
+        const data = {
+            email: email,
+            password: password
+        }
+        await fetch(API_Login, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    const userID = data.userID; /// cais truyeenf di tuw` API
+                    console.log(userID);
+                    setEmail('')
+                    setPassword('')
+                    onNavigate(RootScreens.MAIN)
+                }
+                else {
+                    alert(data.error)
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
     return (
         <View style={styles.container}>
