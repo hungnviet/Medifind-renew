@@ -17,7 +17,7 @@ export const LoginContainer = ({
     const onNavigate = (screen: RootScreens) => {
         navigation.navigate(screen);
     };
-    const onNavigateHome = (userID: string) => {
+    const onNavigateHome = (userID: string | undefined) => {
         navigation.navigate(MainScreens.HOME, {userID: userID});
     }
 

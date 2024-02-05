@@ -7,7 +7,7 @@ import { useState } from "react"
 
 export interface LogInProps {
     onNavigate: (screen: RootScreens) => void;
-    onNavigateHome: (userID: string) => void;
+    onNavigateHome: (userID: string | undefined) => void;
 }
 
 export const Login = (props: LogInProps) => {

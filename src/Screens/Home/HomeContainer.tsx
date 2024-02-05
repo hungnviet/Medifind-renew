@@ -6,9 +6,9 @@ import { MainScreens } from "..";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { RootStackParamList } from "@/Navigation";
 
-type HomeScreenNavigatorProps = NativeStackScreenProps<
-  MainBottomBarParamList,
-  MainScreens.HOME
+type HomeScreenNavigatorProps = CompositeScreenProps<
+NativeStackScreenProps<MainBottomBarParamList, MainScreens.HOME>,
+NativeStackScreenProps<RootStackParamList>
 >;
 
 export const HomeContainer = ({ navigation, route }: HomeScreenNavigatorProps) => {
