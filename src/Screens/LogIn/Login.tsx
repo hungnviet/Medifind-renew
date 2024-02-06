@@ -136,7 +136,7 @@ export const Login = (props: LogInProps) => {
                     <Text>
                         Don't have an account?
                     </Text>
-                    <TouchableOpacity onPress={() => onNavigate(RootScreens.SIGNUP)}>
+                    <TouchableOpacity onPress={() => alert("Sory function is updating \nYou can use the following account for testing \n Email:medifind@gamil.com \n Password: healthtechsolution")}>
                         <Text style={{ color: "#407BFF" }}>
                             Register
                         </Text>

@@ -3,7 +3,8 @@ import { MainScreens } from "..";
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 import { useEffect, useState } from "react"
-
+import { useIsFocused } from '@react-navigation/native'
+import { set } from 'lodash';
 
 export interface HistoryProps {
     onNavigate: (screen: MainScreens) => void;
@@ -30,30 +31,36 @@ export function History_tag({ infor }: { infor: History }) {
 
 export const History = (props: HistoryProps) => {
     const { onNavigate } = props;
+    const isFocused = useIsFocused();
     const [history, setHistory] = useState<History[]>([]);
+    const apiBE = "https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/historyMedicine/"
+    const userID = "65c25e4d4a7017b0efb30dc9"
+    async function loadHistory() {
+        try {
+            const response = await fetch(apiBE + userID, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            const data = await response.json();
+            const arr = data.data.history;
+            const sortedList = [...arr].sort((a, b) => {
+                if (a.year !== b.year) return a.year - b.year;
+                else if (a.year === b.year && a.month !== b.month) return a.month - b.month;
+                else return a.date - b.date;
+            });
+            setHistory(sortedList);
+        } catch (error) {
+            console.error(error);
+        }
+    }
     useEffect(() => {
-        const historyArray: History[] = [
-            {
-                name: 'Ibuprofen',
-                date: 15,
-                month: 7,
-                year: 2023,
-            },
-            {
-                name: 'Paracetamol',
-                date: 1,
-                month: 1,
-                year: 2024,
-            },
-            {
-                name: 'Aspirin',
-                date: 1,
-                month: 2,
-                year: 2024,
-            },
-        ];
-        setHistory(historyArray);
+        loadHistory();
     }, [])
+    useEffect(() => {
+        loadHistory();
+    }, [isFocused])
     return (
         <View style={styles.container}>
             <View style={{ alignItems: 'center' }}>

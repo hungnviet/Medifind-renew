@@ -5,7 +5,8 @@ import Swiper from 'react-native-swiper';
 import * as Progress from 'react-native-progress';
 import { ScrollView } from 'native-base';
 import Checkbox from 'expo-checkbox';
-import { indexOf, set, stubArray } from 'lodash';
+import { indexOf, isArrayBuffer, set, stubArray } from 'lodash';
+import { useIsFocused } from '@react-navigation/native';
 interface Props {
   weekView?: boolean;
 }
@@ -87,8 +88,8 @@ const ExpandableCalendarScreen = (props: Props) => {
   let curDate = new Date().getDate();
   const [taskNumber, setTaskNumber] = useState(0)
   const [reminders, setReminders] = useState<Reminder[]>([])
-
-  const userID = "65c0733201f9f94bf96ccf87";
+  const isFocus = useIsFocused();
+  const userID = "65c25e4d4a7017b0efb30dc9";
   const api_reminder = `https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/reminder/${userID}`
   useEffect(() => {
     async function getReminder() {
@@ -100,7 +101,6 @@ const ExpandableCalendarScreen = (props: Props) => {
         else {
           let data = await response.json();
           const arr = data.data.reminders;
-          console.log(arr.length);
           const sortedList = [...arr].sort((a, b) => {
             if (a.state !== b.state) {
               return a.state ? 1 : -1;
@@ -120,6 +120,36 @@ const ExpandableCalendarScreen = (props: Props) => {
     }
     getReminder();
   }, []);
+  useEffect(() => {
+    async function getReminder() {
+      try {
+        let response = await fetch(api_reminder);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        else {
+          let data = await response.json();
+          const arr = data.data.reminders;
+          const sortedList = [...arr].sort((a, b) => {
+            if (a.state !== b.state) {
+              return a.state ? 1 : -1;
+            }
+            else if (a.hour !== b.hour) {
+              return a.hour - b.hour;
+            } else {
+              return a.minute - b.minute;
+            }
+          });
+          setReminders(sortedList);
+          setTaskNumber(sortedList.length);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getReminder();
+  }, [isFocus]);
+
 
   async function handleCheckBox(task: Reminder) {
     const API = "https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/reminder/";

@@ -28,6 +28,12 @@ interface inforPobs {
   congTy: string,
   diaChiSX: string,
 }
+interface History {
+  name: string,
+  date: number,
+  month: number,
+  year: number,
+}
 export function InforContainer({ infor }: { infor: inforPobs }) {
   return (
     <View style={styles.result_container}>
@@ -70,9 +76,31 @@ export const Scan = (props: IScanProps) => {
   const [resSucces, setResSucces] = useState<boolean>(false);
   const [errRes, setErrRes] = useState<boolean>(false);
   const [information, setInformation] = useState<inforPobs[]>([])
-
+  const userID = "65c25e4d4a7017b0efb30dc9"
+  const apiUpdate = "https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/historyMedicine/"
+  async function updateHistory(arr: History[]) {
+    try {
+      const response = await fetch(apiUpdate + userID, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(arr)
+      })
+      const data = await response.json();
+      if (data.status === "success") {
+        console.log("Update success")
+      }
+      else {
+        await updateHistory(arr)
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const sendPictureToApi = async (uri: string) => {
     const apiBE = "https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/nlp"
+
     await setLoading(true);
     await setErrRes(false);
     const formData = new FormData();
@@ -102,6 +130,17 @@ export const Scan = (props: IScanProps) => {
         setErrRes(false);
         setResSucces(true)
         await setInformation(data);
+        let arr: History[] = [];
+        await data.forEach((el: inforPobs) => {
+          const date = new Date();
+          arr.push({
+            name: el.ten,
+            date: date.getDate(),
+            month: date.getMonth(),
+            year: date.getFullYear()
+          })
+        })
+        await updateHistory(arr);
       }
     } catch (error) {
       console.error('Error sending picture to OCRmodel:', error);

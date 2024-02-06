@@ -15,7 +15,7 @@ export const HomeContainer = ({ navigation }: HomeScreenNavigatorProps) => {
   };
   // onNavigate a screen with params
   // Example
-  // const onNavigateSearch = (text: string) => {
+  //const onNavigateSearch = (text: string) => {
   //   navigation.push(MainScreens.SEARCH, { text: string });
   // };
   return <Home onNavigate={onNavigate} />;

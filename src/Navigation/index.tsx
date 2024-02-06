@@ -8,7 +8,7 @@ import { RootScreens } from "@/Screens";
 import { LoginContainer } from "@/Screens/LogIn/LoginContainer";
 import { SignUpContainer } from "@/Screens/SignUp/SignUpContainer";
 export type RootStackParamList = {
-  [RootScreens.MAIN]: { userID: string };
+  [RootScreens.MAIN]: undefined;
   [RootScreens.WELCOME]: undefined;
   [RootScreens.LOGIN]: undefined;
   [RootScreens.SIGNUP]: undefined

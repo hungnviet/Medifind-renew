@@ -9,6 +9,7 @@ const height = Dimensions.get('screen').height;
 export interface IHomeProps {
   onNavigate: (string: MainScreens) => void;
 }
+import { useIsFocused } from "@react-navigation/native"
 
 
 interface Reminder {
@@ -43,10 +44,10 @@ export function Task({ task }: { task: Reminder }) {
 export const Home = (props: IHomeProps) => {
   const navigation = useNavigation();
   const { onNavigate } = props;
-  const [userName, setUserName] = useState('Thu')
+  const [userName, setUserName] = useState('Guest')
   const [reminders, setReminders] = useState<Reminder[]>([])
-
-  const userID = "65c0733201f9f94bf96ccf87";
+  const isFocused = useIsFocused();
+  const userID = "65c25e4d4a7017b0efb30dc9";
   const api_reminder = `https://medifind-be.proudsea-d3f4859a.eastasia.azurecontainerapps.io/api/v1/reminder/${userID}`
   useEffect(() => {
     async function getReminder() {
@@ -78,6 +79,38 @@ export const Home = (props: IHomeProps) => {
     }
     getReminder();
   }, []);
+  useEffect(() => {
+    if (isFocused) {
+      async function getReminder() {
+        try {
+          let response = await fetch(api_reminder);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          else {
+            let data = await response.json();
+            const arr = data.data.reminders;
+            console.log(arr.length);
+            const sortedList = [...arr].sort((a, b) => {
+              if (a.state !== b.state) {
+                return a.state ? 1 : -1;
+              }
+              else if (a.hour !== b.hour) {
+                return a.hour - b.hour;
+              } else {
+                return a.minute - b.minute;
+              }
+            });
+            setReminders(sortedList);
+            ///console.log(reminders.length);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+      getReminder();
+    }
+  }, [isFocused]);
 
   return (
     <View style={styles.container}>
@@ -92,7 +125,7 @@ export const Home = (props: IHomeProps) => {
         </View>
         <View style={styles.bottom_header}>
           <TextInput placeholder='Search Medicine' style={{ paddingLeft: 20 }} />
-          <TouchableOpacity style={styles.search_btn}>
+          <TouchableOpacity style={styles.search_btn} onPress={() => onNavigate(MainScreens.SEARCH)}>
             <Image source={require('./iamges/search.png')} style={styles.image_size} />
           </TouchableOpacity>
 
